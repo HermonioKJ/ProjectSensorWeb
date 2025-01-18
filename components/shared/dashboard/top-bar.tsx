@@ -1,7 +1,6 @@
-import Link from "next/link";
 import AppLogo from "../app-logo";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftToLine, PowerIcon } from "lucide-react";
+import { ArrowLeftToLine } from "lucide-react";
 import { signOut } from "@/auth";
 
 export default function TopBar() {

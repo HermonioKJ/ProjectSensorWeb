@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { fetchLatestInvoices } from '@/lib/actions/invoice-actions'
-import { lusitana, roboto } from '../fonts'
+import { roboto } from '../fonts'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { RefreshCcw } from 'lucide-react'
