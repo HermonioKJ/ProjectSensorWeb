@@ -1,0 +1,9 @@
+.cards {
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* This is equivalent to shadow-md */
+  }
+  
+  .cards-content {
+    border-radius: 20px; /* Apply rounded corners to CardContent if needed */
+  }
+  
