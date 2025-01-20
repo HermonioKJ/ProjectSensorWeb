@@ -10,6 +10,7 @@ import { Suspense } from 'react'
 export const metadata: Metadata = {
   title: 'Invoices',
 }
+
 export default async function Page({
   searchParams,
 }: {
@@ -18,9 +19,13 @@ export default async function Page({
     page?: string
   }
 }) {
+  // Handle query and page values
   const query = searchParams?.query || ''
   const currentPage = Number(searchParams?.page) || 1
+
+  // Await async function to fetch total pages
   const totalPages = await fetchInvoicesPages(query)
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
