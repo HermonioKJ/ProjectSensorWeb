@@ -2,7 +2,6 @@ import './globals.css'
 import { inter } from '@/components/shared/fonts'
 import {APP_DESCRIPTION, APP_NAME, SERVER_URL} from '@/lib/constant'
 import { Metadata } from 'next'
-import { SessionProvider } from 'next-auth/react'
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +18,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <SessionProvider>
        <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
       { children }
@@ -38,7 +36,6 @@ export default function RootLayout({
       */} 
       </body>
     </html>
-    </SessionProvider>
    
   )
 }
