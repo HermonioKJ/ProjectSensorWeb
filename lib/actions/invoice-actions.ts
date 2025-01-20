@@ -1,9 +1,42 @@
+'use server'
+
 import db from '@/db/drizzle'
-import { customers, invoices, revenue } from '@/db/schema'
-import { count, desc, eq, ilike, sql, or } from 'drizzle-orm'
+import { customers, invoices, revenue, ebus } from '@/db/schema'
+import { count, desc, eq, ilike, sql, or, sum } from 'drizzle-orm'
 import { formatCurrency } from '../utils'
-import { ITEMS_PER_PAGE } from '../constant'
 import { revalidatePath } from 'next/cache'
+import { ITEMS_PER_PAGE } from '../constant'
+import { z } from 'zod'
+import { redirect } from 'next/navigation'
+import { InvoiceForm } from '@/types'
+
+export async function fetchCardStat(){
+  try{
+    const EbusCountPromise = db.select({ count: count() }).from(ebus)
+    const TotalDiscrepencyPromise = db.select({ sumDiscrepancy: sum(ebus.discrepancy) }).from(ebus);
+    const TotalPassengersPromise = db.select({ sumTotalPassengers: sum(ebus.total_passengers)}).from(ebus);
+    const CurrentPassengerPromise = db.select({ sumCurrentPassengers: sum(ebus.current_passengers)}).from(ebus);
+    const data = await Promise.all([
+      EbusCountPromise,
+      TotalDiscrepencyPromise,
+      TotalPassengersPromise,
+      CurrentPassengerPromise
+    ])
+    const EbusCount = Number(data[0][0].count ?? '0'); // Ebus count
+    const TotalDiscrepency = Number(data[1][0].sumDiscrepancy ?? '0'); 
+    const TotalPassengers = Number(data[2][0].sumTotalPassengers ?? '0'); 
+    const CurrentPassengers = Number(data[3][0].sumCurrentPassengers ?? '0');
+
+    return{
+      EbusCount, TotalDiscrepency, TotalPassengers, CurrentPassengers
+    }
+  }
+  catch (error) {
+    console.error('Error fetching card stats:', error);
+    throw new Error('Failed to fetch card statistics');
+  }
+}
+
 export async function fetchCardData() {
   try {
     const invoiceCountPromise = db.select({ count: count() }).from(invoices)
@@ -47,6 +80,35 @@ export async function fetchRevenue() {
 }
 
 //updated data
+
+
+export async function fetchLatestEbus() {
+  try {
+      const data = await db
+      .select({
+        license: ebus.license,
+        route: ebus.route,
+        total_passengers: ebus.total_passengers,
+        current_passengers: ebus.current_passengers,
+        id: ebus.id,
+        discrepancy: ebus.discrepancy
+      })
+      .from(ebus)
+      .orderBy(desc(ebus.id)) 
+    .limit(5)
+      const latestEbus = data.map((bus) => ({
+        ...bus, //for formatting here
+        total_passengers: bus.total_passengers,
+        current_passengers: bus.current_passengers,
+      }))
+  
+    return latestEbus
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch the latest invoices.')
+  }
+}
+
 export async function fetchLatestInvoices() {
   try {
     const data = await db
@@ -76,14 +138,14 @@ export async function fetchLatestInvoices() {
 export async function deleteInvoice(id: string) {
   try {
     await db.delete(invoices).where(eq(invoices.id, id))
-    revalidatePath('/dashboard/invoices')
+    revalidatePath('/dashboard/modern-jeeps')
     return { message: 'Deleted Invoice' }
   } catch (error) {
     return { message: 'Database Error: Failed to Delete Invoice.' }
   }
 }
 
-//filter
+//returns the data in that page
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number
@@ -116,5 +178,152 @@ export async function fetchFilteredInvoices(
   } catch (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to fetch invoices.')
+  }
+}
+
+//counts the number of max pages
+export async function fetchInvoicesPages(query: string) {
+  try {
+    const data = await db
+      .select({
+        count: count(),
+      })
+      .from(invoices)
+      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .where(
+        or(
+          ilike(customers.name, sql`${`%${query}%`}`),
+          ilike(customers.email, sql`${`%${query}%`}`),
+          ilike(invoices.status, sql`${`%${query}%`}`)
+        )
+      )
+    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE)
+    return totalPages
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch total number of invoices.')
+  }
+}
+
+const FormSchema = z.object({
+  id: z.string(),
+  customerId: z.string({
+    invalid_type_error: 'Please select a customer.',
+  }),
+  amount: z.coerce
+    .number()
+    .gt(0, { message: 'Please enter an amount greater than $0.' }),
+  status: z.enum(['pending', 'paid'], {
+    invalid_type_error: 'Please select an invoice status.',
+  }),
+  date: z.string(),
+})
+const CreateInvoice = FormSchema.omit({ id: true, date: true })
+const UpdateInvoice = FormSchema.omit({ date: true, id: true })
+export type State = {
+  errors?: {
+    customerId?: string[]
+    amount?: string[]
+    status?: string[]
+  }
+  message?: string | null
+}
+
+
+export async function createInvoice(prevState: State, formData: FormData) {
+  // Validate form fields using Zod
+  const validatedFields = CreateInvoice.safeParse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  })
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Invoice.',
+    }
+  }
+  // Prepare data for insertion into the database
+  const { customerId, amount, status } = validatedFields.data
+  const amountInCents = amount * 100
+  const date = new Date().toISOString().split('T')[0]
+  // Insert data into the database
+  try {
+    await db.insert(invoices).values({
+      customer_id: customerId,
+      amount: amountInCents,
+      status,
+      date,
+    })
+  } catch (error) {
+    // If a database error occurs, return a more specific error.
+    return {
+      message: 'Database Error: Failed to Create Invoice.',
+    }
+  }
+  // Revalidate the cache for the invoices page and redirect the user.
+  revalidatePath('/dashboard/modern-jeeps')
+  redirect('/dashboard/modern-jeeps')
+}
+
+
+export async function updateInvoice(
+  id: string,
+  prevState: State,
+  formData: FormData
+) {
+  const validatedFields = UpdateInvoice.safeParse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  })
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Update Invoice.',
+    }
+  }
+  const { customerId, amount, status } = validatedFields.data
+  const amountInCents = amount * 100
+  try {
+    await db
+      .update(invoices)
+      .set({
+        customer_id: customerId,
+        amount: amountInCents,
+        status,
+      })
+      .where(eq(invoices.id, id))
+  } catch (error) {
+    return { message: 'Database Error: Failed to Update Invoice.' }
+  }
+  revalidatePath('/dashboard/modern-jeeps')
+  redirect('/dashboard/modern-jeeps')
+}
+
+
+export async function fetchInvoiceById(id: string) {
+  try {
+    const data = await db
+      .select({
+        id: invoices.id,
+        customer_id: invoices.customer_id,
+        amount: invoices.amount,
+        status: invoices.status,
+        date: invoices.date,
+      })
+      .from(invoices)
+      .where(eq(invoices.id, id))
+    const invoice = data.map((invoice) => ({
+      ...invoice,
+      // Convert amount from cents to dollars
+      status: invoice.status === 'paid' ? 'paid' : 'pending',
+      amount: invoice.amount / 100,
+    }))
+    return invoice[0] as InvoiceForm
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch invoice.')
   }
 }

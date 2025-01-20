@@ -1,5 +1,5 @@
 import '@/db/env-config'
-import { customers, invoices, revenue, users } from '@/lib/placeholder-data'
+import { customers, invoices, revenue, users, ebus } from '@/lib/placeholder-data'
 import db from './drizzle'
 import * as schema from './schema'
 import { exit } from 'process'
@@ -10,10 +10,12 @@ const main = async () => {
       await tx.delete(schema.invoices)
       await tx.delete(schema.customers)
       await tx.delete(schema.users)
+      await tx.delete(schema.ebus)
       await tx.insert(schema.users).values(users)
       await tx.insert(schema.customers).values(customers)
       await tx.insert(schema.invoices).values(invoices)
       await tx.insert(schema.revenue).values(revenue)
+      await tx.insert(schema.ebus).values(ebus)
     })
     console.log('Database seeded successfully')
     exit(0)

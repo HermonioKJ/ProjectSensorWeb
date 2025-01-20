@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { fetchCardData } from '@/lib/actions/invoice-actions'
+import { fetchCardStat } from '@/lib/actions/invoice-actions'
 import { BanknoteIcon, ClockIcon, InboxIcon, UsersIcon } from 'lucide-react' // icon
 import { roboto } from '../fonts'
 
@@ -14,18 +14,18 @@ const iconMap = {
 
 export default async function StatCardsWrapper() {
   const {
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  } = await fetchCardData()
+    EbusCount,
+    TotalDiscrepency,
+    TotalPassengers,
+    CurrentPassengers,
+  } = await fetchCardStat()
 
   return (
     <div className="grid grid-cols-2 gap-8">
-      <StatCard title="Collected" value={totalPaidInvoices} type="collected" />
-      <StatCard title="Pending" value={totalPendingInvoices} type="pending" />
-      <StatCard title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <StatCard title="Total Customers" value={numberOfCustomers} type="customers" />
+      <StatCard title="Total No. of Ebuses" value={EbusCount} type="collected" />
+      <StatCard title="Total No. of Passengers" value={TotalDiscrepency} type="pending" />
+      <StatCard title="Total Discrepency" value={TotalPassengers} type="invoices" />
+      <StatCard title="Current Passengers" value={CurrentPassengers} type="customers" />
     </div>
   )
 }

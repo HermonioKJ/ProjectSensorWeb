@@ -1,9 +1,11 @@
-import LatestInvoices from '@/components/shared/dashboard/latest-invoices'
+import LatestEbus from '@/components/shared/dashboard/latest-ebus'
 import NameCard from '@/components/shared/dashboard/name-card-wrapper'
 import RevenueChartWrapper from '@/components/shared/dashboard/revenue-chart-wrapper'
 import StatCardsWrapper from '@/components/shared/dashboard/stat-cards-wrapper'
+import ViewButton from '@/components/shared/dashboard/ViewButton'
 import { roboto } from '@/components/shared/fonts'
 import { CardsSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/components/shared/skeletons'
+import { Button } from '@/components/ui/button'
 import { Suspense } from 'react'
 
 export default async function Page() {
@@ -20,16 +22,16 @@ export default async function Page() {
         <Suspense fallback={<CardsSkeleton />}>
           <StatCardsWrapper />
         </Suspense>
+        <div className='flex flex-row w-full gap-10'>
+        <ViewButton className='w-full py-14 text-left text-2xl'>Add new <br></br> Ebus</ViewButton>
+          <Button className='w-full py-14 text-left'>
+            <span className='text-2xl'>View History <br></br>Tab</span>
+          </Button>
+        </div>
+
         <Suspense fallback={<LatestInvoicesSkeleton />}>
-          <LatestInvoices />
+          <LatestEbus />
         </Suspense>
-        {/* <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <CardsSkeleton />
-        </div> */}
-        {/* <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-          <RevenueChartSkeleton />
-          <LatestInvoicesSkeleton />
-        </div> */}
       </div>
 
       {/* For the recent updates panel */}

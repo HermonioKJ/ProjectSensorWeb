@@ -54,3 +54,18 @@ export const invoices = pgTable('invoices', {
   status: varchar('status', { length: 255 }).notNull(),
   date: date('date').notNull(),
 })
+
+export const ebus = pgTable('ebus', {
+  id: uuid('id')
+    .default(sql`uuid_generate_v4()`)
+    .primaryKey()
+    .notNull(),
+  route: varchar('route', { length: 255 }).notNull(),
+  total_passengers: integer('total_passengers').notNull(),
+  status: varchar('status', { length: 100 }).notNull(),
+  current_passengers: integer('current_passengers').notNull(),
+  discrepancy: integer('discrepancy').notNull(),
+  license: varchar('license', { length: 255 }).notNull(),
+  latitude: integer('latitude'), 
+  longitude: integer('longitude'),
+})
