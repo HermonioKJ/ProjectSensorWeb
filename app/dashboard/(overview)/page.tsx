@@ -16,17 +16,17 @@ export default async function Page() {
         <h1 className={`${roboto.className} font-bold text-xl md:text-2xl`}>
           Dashboard
         </h1>
-        <Suspense fallback={<CardsSkeleton />}>
+        {/* <Suspense fallback={<CardsSkeleton />}>
           <NameCard />
-        </Suspense>
+        </Suspense> */}
         <Suspense fallback={<CardsSkeleton />}>
           <StatCardsWrapper />
         </Suspense>
         <div className='flex flex-row w-full gap-10'>
-        <ViewButton className='w-full py-14 text-left text-2xl'>Add new <br></br> Ebus</ViewButton>
+        {/* <ViewButton className='w-full py-14 text-left text-2xl'>Add new <br></br> Ebus</ViewButton>
           <Button className='w-full py-14 text-left'>
             <span className='text-2xl'>View History <br></br>Tab</span>
-          </Button>
+          </Button> */}
         </div>
 
         <Suspense fallback={<LatestInvoicesSkeleton />}>
@@ -40,7 +40,6 @@ export default async function Page() {
           Recent Activity
         </h1>
          <div className="grid gap-6 sm:grid-cols-1 lg:grid-rows-1">
-          <CardsSkeleton />
         </div>
         <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChartWrapper />

@@ -4,18 +4,26 @@ import { fetchCustomers } from '@/lib/actions/customer-actions'
 import { fetchInvoiceById } from '@/lib/actions/invoice-actions'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+
 export const metadata: Metadata = {
   title: 'Edit Invoice',
 }
-export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  // Await the params object since it's now a Promise
+  const { id } = await params
+
+  // Fetch invoice and customers concurrently
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
   ])
+
+  // If no invoice is found, show 404
   if (!invoice) {
     notFound()
   }
+
   return (
     <main>
       <Breadcrumbs
