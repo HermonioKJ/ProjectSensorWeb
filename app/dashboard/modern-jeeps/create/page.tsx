@@ -1,25 +1,28 @@
 import Breadcrumbs from '@/components/shared/buslist/breadcrumbs'
 import Form from '@/components/shared/buslist/create-form'
-import { fetchCustomers } from '@/lib/actions/customer-actions'
+import { fetchebus } from '@/lib/actions/ebus-action'
 import { Metadata } from 'next'
+
 export const metadata: Metadata = {
-  title: 'Create Invoice',
+  title: 'Add Modern Jeep',
 }
+
 export default async function Page() {
-  const customers = await fetchCustomers()
+  const ebus = await fetchebus()
+
   return (
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Invoices', href: '/dashboard/modern-jeeps' },
+          { label: 'Modern Jeeps', href: '/dashboard/modern-jeep' },
           {
-            label: 'Create Invoice',
-            href: '/dashboard/modern-jeeps/create',
+            label: 'Add Modern Jeep',
+            href: '/dashboard/modern-jeep/create',
             active: true,
           },
         ]}
       />
-      <Form customers={customers} />
+      <Form ebus={ebus} />
     </main>
   )
 }

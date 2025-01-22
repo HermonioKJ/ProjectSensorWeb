@@ -9,238 +9,71 @@ const users = [
   },
 ]
 
-const ebus = [
+const coopData = {
+  id: 'a1e56e2e-99d5-4a4b-91fa-944d1840521f',
+  name: 'XYZ Coop',
+  address: '123 Cooperative St, City, Country',
+};
+
+const driverData = {
+  id: 'e4b56f3e-937f-4e3d-b0a4-0b9c22162bda',
+  name: 'John Doe',
+  license_number: 'D1234567',
+};
+
+const conductorData = {
+  id: '6db7b490-91e7-4bfa-b07a-b7632a03e77b',
+  name: 'Jane Smith',
+};
+
+const ebusData = [
   {
-    id: '38b65d1d-4c8d-430d-b6c9-a04c1a3ec280',
-    route: 'Jaro Liko',
+    id: 'fa34701b-997f-4a58-bfe3-d8390b732dcd',
+    license: 'AB123CD',
+    route: 'Route A',
     status: 'active',
-    total_passengers: 105, 
-    current_passengers: 28, 
-    discrepancy: 4,
-    license:'FAB-100',
-    latitude: 10.3110, 
-    longitude: 123.8828,
-  },
-  {
-    id: '4074727d-bc3d-4d37-a708-7f6c3621c4c5',
-    route: 'Jaro CPU',
-    status: 'active',
-    total_passengers: 100, 
-    current_passengers: 59, 
+    coop_id: coopData.id,
+    driver_id: driverData.id,
+    conductor_id: conductorData.id,
+    total_passengers: 50,
+    current_passengers: 30,
     discrepancy: 10,
-    license:'FAB-101',
-    latitude: 102.3110, 
-    longitude: 33.8828,
+    DateRegistered: new Date().toISOString
+  },
+];
+
+const sensorData = [
+  {
+    id: 'f9384712-b2e9-4d8e-b61f-c6343b8ae12d',
+    ebus_id: ebusData[0].id,
+    latitude: 123456,
+    longitude: 654321,
+    passenger_count: 30,
+    timestamp: new Date(),
+  },
+];
+
+const revenue = [
+  {
+    month: 'January',
+    revenue: 1000
   },
   {
-    id: '4a63188a-3584-4f07-b80e-39e2afc42296',
-    route: 'Pavia',
-    status: 'inactive',
-    total_passengers: 105, 
-    current_passengers: 0, 
-    discrepancy: 0,
-    license:'FAB-103',
-    latitude: 0.0, 
-    longitude: 0.0,
+    month: 'Febuary',
+    revenue: 2000
   },
   {
-    id: 'ac287ce9-4016-4312-8e3e-4abd5254809f',
-    route: 'Pavia',
-    status: 'inactive',
-    total_passengers: 105, 
-    current_passengers: 0, 
-    discrepancy: 0,
-    license:'FAB-103',
-    latitude: 0.0, 
-    longitude: 0.0,
+    month: 'March',
+    revenue: 3000
   },
   {
-    id: 'bc83438c-d86d-45ca-9a86-4aa8c6737408',
-    route: 'Jaro Liko',
-    status: 'active',
-    total_passengers: 105, 
-    current_passengers: 28, 
-    discrepancy: 4,
-    license:'FAB-100',
-    latitude: 10.3110, 
-    longitude: 123.8828,
+    month: 'April',
+    revenue: 4500
   },
   {
-    id: 'cb970668-ff1f-427c-8b6c-bc2baae889c9',
-    route: 'Jaro CPU',
-    status: 'active',
-    total_passengers: 100, 
-    current_passengers: 59, 
-    discrepancy: 10,
-    license:'FAB-101',
-    latitude: 102.3110, 
-    longitude: 33.8828,
-  },
-  {
-    id: 'd2cfcc6f-53db-403e-90de-b243a2685741',
-    route: 'SM City Proper',
-    status: 'active',
-    total_passengers: 105, 
-    current_passengers: 60, 
-    discrepancy: 5,
-    license:'FAB-102',
-    latitude: 105.3110, 
-    longitude: 10.8828,
-  },
-  {
-    id: 'e5c402ca-0865-43ce-9496-75d92764d77a',
-    route: 'Pavia',
-    status: 'inactive',
-    total_passengers: 105, 
-    current_passengers: 0, 
-    discrepancy: 0,
-    license:'FAB-103',
-    latitude: 0.0, 
-    longitude: 0.0,
-  },
-  {
-    id: 'f9ea1929-fd9e-42c6-bb92-e08f0b983e83',
-    route: 'Pavia',
-    status: 'inactive',
-    total_passengers: 105, 
-    current_passengers: 0, 
-    discrepancy: 0,
-    license:'FAB-103',
-    latitude: 0.0, 
-    longitude: 0.0,
+    month: 'May',
+    revenue: 4500
   },
 ]
 
-const customers = [
-  {
-    id: 'd6e15727-9fe1-4961-8c5b-ea44a9bd81aa',
-    name: 'Amari Hart',
-    email: 'amari@gmail.com',
-    image_url: '/customers/a1.jpeg',
-  },
-  {
-    id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
-    name: 'Alexandria Brown',
-    email: 'brown@gmail.com',
-    image_url: '/customers/a2.jpeg',
-  },
-  {
-    id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
-    name: 'Emery Cabrera',
-    email: 'emery@example.com',
-    image_url: '/customers/a3.jpeg',
-  },
-  {
-    id: '76d65c26-f784-44a2-ac19-586678f7c2f2',
-    name: 'Michael Novotny',
-    email: 'michael@novotny.com',
-    image_url: '/customers/a4.jpeg',
-  },
-  {
-    id: 'CC27C14A-0ACF-4F4A-A6C9-D45682C144B9',
-    name: 'Lily Conrad',
-    email: 'lily@yahoo.com',
-    image_url: '/customers/a5.jpeg',
-  },
-  {
-    id: '13D07535-C59E-4157-A011-F8D2EF4E0CBB',
-    name: 'Ricky Mata',
-    email: 'ricky@live.com',
-    image_url: '/customers/a6.jpeg',
-  },
-]
-const invoices = [
-  {
-    customer_id: customers[0].id,
-    amount: 15795,
-    status: 'pending',
-    date: '2022-12-06',
-  },
-  {
-    customer_id: customers[1].id,
-    amount: 20348,
-    status: 'pending',
-    date: '2022-11-14',
-  },
-  {
-    customer_id: customers[4].id,
-    amount: 3040,
-    status: 'paid',
-    date: '2022-10-29',
-  },
-  {
-    customer_id: customers[3].id,
-    amount: 44800,
-    status: 'paid',
-    date: '2023-09-10',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 34577,
-    status: 'pending',
-    date: '2023-08-05',
-  },
-  {
-    customer_id: customers[2].id,
-    amount: 54246,
-    status: 'pending',
-    date: '2023-07-16',
-  },
-  {
-    customer_id: customers[0].id,
-    amount: 666,
-    status: 'pending',
-    date: '2023-06-27',
-  },
-  {
-    customer_id: customers[3].id,
-    amount: 32545,
-    status: 'paid',
-    date: '2023-06-09',
-  },
-  {
-    customer_id: customers[4].id,
-    amount: 1250,
-    status: 'paid',
-    date: '2023-06-17',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 8546,
-    status: 'paid',
-    date: '2023-06-07',
-  },
-  {
-    customer_id: customers[1].id,
-    amount: 500,
-    status: 'paid',
-    date: '2023-08-19',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 8945,
-    status: 'paid',
-    date: '2023-06-03',
-  },
-  {
-    customer_id: customers[2].id,
-    amount: 1000,
-    status: 'paid',
-    date: '2022-06-05',
-  },
-]
-const revenue = [
-  { month: 'Jan', revenue: 2000 },
-  { month: 'Feb', revenue: 1800 },
-  { month: 'Mar', revenue: 2200 },
-  { month: 'Apr', revenue: 2500 },
-  { month: 'May', revenue: 2300 },
-  { month: 'Jun', revenue: 3200 },
-  { month: 'Jul', revenue: 3500 },
-  { month: 'Aug', revenue: 3700 },
-  { month: 'Sep', revenue: 2500 },
-  { month: 'Oct', revenue: 2800 },
-  { month: 'Nov', revenue: 3000 },
-  { month: 'Dec', revenue: 4800 },
-]
-export { users, customers, invoices, revenue, ebus }
+export { revenue, users, ebusData, sensorData, coopData, conductorData, driverData }

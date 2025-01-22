@@ -23,8 +23,8 @@ export default async function StatCardsWrapper() {
   return (
     <div className="grid grid-cols-2 gap-8">
       <StatCard title="Total No. of Ebuses" value={EbusCount} type="collected" />
-      <StatCard title="Total No. of Passengers" value={TotalDiscrepency} type="pending" />
-      <StatCard title="Total Discrepency" value={TotalPassengers} type="invoices" />
+      <StatCard title="Total No. of Passengers" value={TotalPassengers} type="pending" />
+      <StatCard title="Total Discrepency" value={TotalDiscrepency} type="invoices" />
       <StatCard title="Current Passengers" value={CurrentPassengers} type="customers" />
     </div>
   )

@@ -1,26 +1,20 @@
 import Breadcrumbs from '@/components/shared/buslist/breadcrumbs'
-import EditInvoiceForm from '@/components/shared/buslist/edit-form'
-import { fetchCustomers } from '@/lib/actions/customer-actions'
-import { fetchInvoiceById } from '@/lib/actions/invoice-actions'
+import EditEbusForm from '@/components/shared/buslist/edit-form'
+import { fetchebus } from '@/lib/actions/ebus-action'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 export const metadata: Metadata = {
-  title: 'Edit Invoice',
+  title: 'Edit Modern Jeep',
 }
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  // Await the params object since it's now a Promise
   const { id } = await params
 
-  // Fetch invoice and customers concurrently
-  const [invoice, customers] = await Promise.all([
-    fetchInvoiceById(id),
-    fetchCustomers(),
-  ])
+  const [ebus] = await fetchebus()
 
   // If no invoice is found, show 404
-  if (!invoice) {
+  if (!ebus) {
     notFound()
   }
 
@@ -28,15 +22,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Invoices', href: '/dashboard/modern-jeeps' },
+          { label: 'Modern Jeeps', href: '/dashboard/modern-jeeps' },
           {
-            label: 'Edit Invoice',
+            label: 'Edit Modern Jeep Entries',
             href: `/dashboard/modern-jeeps/${id}/edit`,
             active: true,
           },
         ]}
       />
-      <EditInvoiceForm invoice={invoice} customers={customers} />
+      <EditEbusForm ebus={ebus} />
     </main>
   )
 }

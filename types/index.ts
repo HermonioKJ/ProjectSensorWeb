@@ -17,3 +17,14 @@ export type FormattedCustomersTable = {
     amount: number
     status: 'pending' | 'paid'
   }
+
+  export type EbusForm = {
+    id: string
+    license: string
+    route: string
+    total_passengers: number
+    current_passengers: number
+    discrepancy: number
+    status: string
+    dateRegistered: Date
+  }

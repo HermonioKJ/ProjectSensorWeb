@@ -1,127 +1,202 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { State, updateInvoice } from '@/lib/actions/invoice-actions'
-import { CustomerField, InvoiceForm } from '@/types'
-import {
-  CheckIcon,
-  ClockIcon,
-  DollarSignIcon,
-  UserCircleIcon,
-} from 'lucide-react'
+import { State, updateEbus } from '@/lib/actions/invoice-actions'
+import { EbusForm } from '@/types'
+import { CheckIcon, ClockIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useActionState } from 'react'
-export default function EditInvoiceForm({
-  invoice,
-  customers,
+
+export default function EditEbusForm({
+  ebus,
 }: {
-  invoice: InvoiceForm
-  customers: CustomerField[]
+  ebus: EbusForm
 }) {
   const initialState: State = { message: null, errors: {} }
-  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id)
-  const [state, formAction] = useActionState(updateInvoiceWithId, initialState)
+  const updateEbusWithId = updateEbus.bind(null, ebus.id)
+  const [state, formAction] = useActionState(updateEbusWithId, initialState)
+
+  // Initialize local state for form fields
+  const [formData, setFormData] = useState<EbusForm>(ebus)
+
+  // Update formData when ebus prop changes
+  useEffect(() => {
+    setFormData(ebus)
+  }, [ebus])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
   return (
     <form action={formAction}>
-      <div className="rounded-md   p-4 md:p-6">
-        {/* Customer Name */}
+      <div className="rounded-md p-4 md:p-6">
+        {/* License No. */}
         <div className="mb-4">
-          <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-            Choose customer
+          <label htmlFor="license" className="mb-2 block text-sm font-medium">
+            License No.
           </label>
           <div className="relative">
-            <select
-              id="customer"
-              name="customerId"
-              className="peer block w-full cursor-pointer rounded-md border   py-2 pl-10 text-sm outline-2  "
-              defaultValue={invoice.customer_id}
-              aria-describedby="customer-error"
-            >
-              <option value="" disabled>
-                Select a customer
-              </option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 " />
+            <input
+              id="license"
+              name="license"
+              type="text"
+              value={formData.license} // Controlled component
+              onChange={handleChange}
+              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+              aria-describedby="license-error"
+            />
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2" />
           </div>
-          <div id="customer-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.customerId &&
-              state.errors.customerId.map((error: string) => (
+          <div id="license-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.license &&
+              state.errors.license.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
               ))}
           </div>
         </div>
-        {/* Invoice Amount */}
+
+        {/* Route */}
         <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
-            Choose an amount
+          <label htmlFor="route" className="mb-2 block text-sm font-medium">
+            Route
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="amount"
-                name="amount"
-                type="number"
-                defaultValue={invoice.amount}
-                step="0.01"
-                placeholder="Enter USD amount"
-                className="peer block w-full rounded-md border   py-2 pl-10 text-sm outline-2  "
-                aria-describedby="amount-error"
-              />
-              <DollarSignIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 " />
-            </div>
-          </div>
-          <div id="amount-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.amount &&
-              state.errors.amount.map((error: string) => (
+          <input
+            id="route"
+            name="route"
+            type="text"
+            value={formData.route} // Controlled component
+            onChange={handleChange}
+            className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+            aria-describedby="route-error"
+          />
+          <div id="route-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.route &&
+              state.errors.route.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
               ))}
           </div>
         </div>
-        {/* Invoice Status */}
-        <fieldset>
+
+        {/* Total Passengers */}
+        <div className="mb-4">
+          <label htmlFor="total_passengers" className="mb-2 block text-sm font-medium">
+            Total Passengers
+          </label>
+          <input
+            id="total_passengers"
+            name="total_passengers"
+            type="number"
+            value={formData.total_passengers} // Controlled component
+            onChange={handleChange}
+            className="peer block w-full rounded-md border py-2 text-sm outline-2"
+            aria-describedby="total_passengers-error"
+          />
+          <div id="total_passengers-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.total_passengers &&
+              state.errors.total_passengers.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Current Passengers */}
+        <div className="mb-4">
+          <label htmlFor="current_passengers" className="mb-2 block text-sm font-medium">
+            Current Passengers
+          </label>
+          <input
+            id="current_passengers"
+            name="current_passengers"
+            type="number"
+            value={formData.current_passengers} // Controlled component
+            onChange={handleChange}
+            className="peer block w-full rounded-md border py-2 text-sm outline-2"
+            aria-describedby="current_passengers-error"
+          />
+          <div id="current_passengers-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.current_passengers &&
+              state.errors.current_passengers.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Discrepancy */}
+        <div className="mb-4">
+          <label htmlFor="discrepancy" className="mb-2 block text-sm font-medium">
+            Discrepancy
+          </label>
+          <input
+            id="discrepancy"
+            name="discrepancy"
+            type="number"
+            value={formData.discrepancy} // Controlled component
+            onChange={handleChange}
+            className="peer block w-full rounded-md border py-2 text-sm outline-2"
+            aria-describedby="discrepancy-error"
+          />
+          <div id="discrepancy-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.discrepancy &&
+              state.errors.discrepancy.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Status */}
+        <fieldset className="mb-4">
           <legend className="mb-2 block text-sm font-medium">
-            Set the invoice status
+            Set the Ebus Status
           </legend>
-          <div className="rounded-md border  px-[14px] py-3">
+          <div className="rounded-md border px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
-                  id="pending"
+                  id="inactive"
                   name="status"
                   type="radio"
-                  value="pending"
-                  defaultChecked={invoice.status === 'pending'}
-                  className="h-4 w-4   focus:ring-2"
+                  value="inactive"
+                  checked={formData.status === 'inactive'}
+                  onChange={handleChange}
+                  className="h-4 w-4 focus:ring-2"
                 />
                 <label
-                  htmlFor="pending"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full  px-3 py-1.5 text-xs font-medium  "
+                  htmlFor="inactive"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
                 >
-                  Pending <ClockIcon className="h-4 w-4" />
+                  Inactive <ClockIcon className="h-4 w-4" />
                 </label>
               </div>
               <div className="flex items-center">
                 <input
-                  id="paid"
+                  id="active"
                   name="status"
                   type="radio"
-                  value="paid"
-                  defaultChecked={invoice.status === 'paid'}
-                  className="h-4 w-4  focus:ring-2"
+                  value="active"
+                  checked={formData.status === 'active'} // Controlled component
+                  onChange={handleChange}
+                  className="h-4 w-4 focus:ring-2"
                 />
                 <label
-                  htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full   px-3 py-1.5 text-xs font-medium  "
+                  htmlFor="active"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
                 >
-                  Paid <CheckIcon className="h-4 w-4" />
+                  Active <CheckIcon className="h-4 w-4" />
                 </label>
               </div>
             </div>
@@ -135,17 +210,21 @@ export default function EditInvoiceForm({
               ))}
           </div>
         </fieldset>
+
+        {/* General Error Message */}
         <div aria-live="polite" aria-atomic="true">
           {state.message ? (
             <p className="my-2 text-sm text-red-500">{state.message}</p>
           ) : null}
         </div>
       </div>
+
+      {/* Form Buttons */}
       <div className="mt-6 flex justify-end gap-4">
         <Button variant="ghost">
           <Link href="/dashboard/modern-jeeps">Cancel</Link>
         </Button>
-        <Button type="submit">Edit Invoice</Button>
+        <Button type="submit">Edit Ebus</Button>
       </div>
     </form>
   )

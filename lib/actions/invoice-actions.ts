@@ -1,14 +1,12 @@
 'use server'
 
 import db from '@/db/drizzle'
-import { customers, invoices, revenue, ebus } from '@/db/schema'
+import { revenue, ebus, drivers, coops, conductors, sensorData } from '@/db/schema'
 import { count, desc, eq, ilike, sql, or, sum } from 'drizzle-orm'
-import { formatCurrency } from '../utils'
 import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
-import { InvoiceForm } from '@/types'
 
 export async function fetchCardStat(){
   try{
@@ -22,7 +20,7 @@ export async function fetchCardStat(){
       TotalPassengersPromise,
       CurrentPassengerPromise
     ])
-    const EbusCount = Number(data[0][0].count ?? '0'); // Ebus count
+    const EbusCount = Number(data[0][0].count ?? '0'); 
     const TotalDiscrepency = Number(data[1][0].sumDiscrepancy ?? '0'); 
     const TotalPassengers = Number(data[2][0].sumTotalPassengers ?? '0'); 
     const CurrentPassengers = Number(data[3][0].sumCurrentPassengers ?? '0');
@@ -34,37 +32,6 @@ export async function fetchCardStat(){
   catch (error) {
     console.error('Error fetching card stats:', error);
     throw new Error('Failed to fetch card statistics');
-  }
-}
-
-export async function fetchCardData() {
-  try {
-    const invoiceCountPromise = db.select({ count: count() }).from(invoices)
-    const customerCountPromise = db.select({ count: count() }).from(customers)
-    const invoiceStatusPromise = db
-      .select({
-        paid: sql<number>`SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END)`,
-        pending: sql<number>`SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END)`,
-      })
-      .from(invoices)
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ])
-    const numberOfInvoices = Number(data[0][0].count ?? '0')
-    const numberOfCustomers = Number(data[1][0].count ?? '0')
-    const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0')
-    const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0')
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    }
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch card data.')
   }
 }
 
@@ -80,8 +47,6 @@ export async function fetchRevenue() {
 }
 
 //updated data
-
-
 export async function fetchLatestEbus() {
   try {
       const data = await db
@@ -109,221 +74,263 @@ export async function fetchLatestEbus() {
   }
 }
 
-export async function fetchLatestInvoices() {
-  try {
-    const data = await db
-      .select({
-        amount: invoices.amount,
-        name: customers.name,
-        image_url: customers.image_url,
-        email: customers.email,
-        id: invoices.id,
-      })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
-      .orderBy(desc(invoices.date))
-      .limit(5)
-    const latestInvoices = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }))
-    return latestInvoices
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch the latest invoices.')
-  }
-}
-
 //delete
-export async function deleteInvoice(id: string) {
+export async function deleteEbus(id: string) {
   try {
-    await db.delete(invoices).where(eq(invoices.id, id))
+    await db.delete(ebus).where(eq(ebus.id, id))
     revalidatePath('/dashboard/modern-jeeps')
-    return { message: 'Deleted Invoice' }
+    return { message: 'Deleted Modern Jeep Entry' }
   } catch (error) {
     return { message: 'Database Error: Failed to Delete Invoice.' }
   }
 }
 
 //returns the data in that page
-export async function fetchFilteredInvoices(
-  query: string,
-  currentPage: number
-) {
+export async function fetchFilteredEbus(query: string, currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
+
   try {
     const data = await db
       .select({
-        id: invoices.id,
-        amount: invoices.amount,
-        name: customers.name,
-        email: customers.email,
-        image_url: customers.image_url,
-        status: invoices.status,
-        date: invoices.date,
+        id: ebus.id,
+        license: ebus.license,
+        route: ebus.route,
+        IsActive: ebus.status,
+        coop_name: coops.name,  
+        driver_name: drivers.name, 
+        conductor_name: conductors.name, 
+        TotalPass: ebus.total_passengers,
+        CurrentPass: ebus.current_passengers,
+        Disc: ebus.discrepancy
       })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .from(ebus)
+      .leftJoin(sensorData, eq(sensorData.ebus_id, ebus.id))
+      .leftJoin(coops, eq(coops.id, ebus.coop_id)) // Left join with coop to get the name
+      .leftJoin(drivers, eq(drivers.id, ebus.driver_id)) // Left join with driver to get the name
+      .leftJoin(conductors, eq(conductors.id, ebus.conductor_id)) // Left join with conductor to get the name
       .where(
         or(
-          ilike(customers.name, sql`${`%${query}%`}`),
-          ilike(customers.email, sql`${`%${query}%`}`),
-          ilike(invoices.status, sql`${`%${query}%`}`)
+          ilike(ebus.license, sql`${`%${query}%`}`),
+          ilike(ebus.route, sql`${`%${query}%`}`),
+          ilike(ebus.status, sql`${`%${query}%`}`),
+          ilike(coops.name, sql`${`%${query}%`}`), // Search by coop name
+          ilike(drivers.name, sql`${`%${query}%`}`), // Search by driver name
+          ilike(conductors.name, sql`${`%${query}%`}`) // Search by conductor name
         )
       )
-      .orderBy(desc(invoices.date))
       .limit(ITEMS_PER_PAGE)
       .offset(offset)
+
     return data
   } catch (error) {
     console.error('Database Error:', error)
-    throw new Error('Failed to fetch invoices.')
+    throw new Error('Failed to fetch filtered ebus data.')
   }
 }
 
+
 //counts the number of max pages
-export async function fetchInvoicesPages(query: string) {
+
+export async function fetcEbusPages(query: string) {
   try {
     const data = await db
       .select({
         count: count(),
       })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .from(ebus)
       .where(
         or(
-          ilike(customers.name, sql`${`%${query}%`}`),
-          ilike(customers.email, sql`${`%${query}%`}`),
-          ilike(invoices.status, sql`${`%${query}%`}`)
+          ilike(ebus.route, sql`${`%${query}%`}`), // Apply filtering to route column
+          ilike(ebus.status, sql`${`%${query}%`}`) // Apply filtering to status column
         )
-      )
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE)
-    return totalPages
+      );
+
+    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
   } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch total number of invoices.')
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of e-bus pages.');
   }
 }
 
 const FormSchema = z.object({
-  id: z.string(),
-  customerId: z.string({
-    invalid_type_error: 'Please select a customer.',
-  }),
-  amount: z.coerce
+  id: z.string(),  
+  license: z.string().min(1, { message: 'License number is required.' }),
+  route: z.string().min(1, { message: 'Route is required.' }),
+  total_passengers: z.coerce
     .number()
-    .gt(0, { message: 'Please enter an amount greater than $0.' }),
-  status: z.enum(['pending', 'paid'], {
-    invalid_type_error: 'Please select an invoice status.',
+    .gte(0, { message: 'Total passengers must be greater than or equal to 0.' }),
+  current_passengers: z.coerce
+    .number()
+    .gte(0, { message: 'Current passengers must be greater than or equal to 0.' }),
+  discrepancy: z.coerce
+    .number()
+    .gte(0, { message: 'Discrepancy must be greater than or equal to 0.' }),
+  status: z.enum(['active', 'inactive'], {
+    invalid_type_error: 'Please select the bus status.',
   }),
   date: z.string(),
+  coop_id: z.string().min(1, 'Coop ID is required'),
+  driver_id: z.string().min(1, 'Driver ID is required'),
+  conductor_id: z.string().min(1, 'Conductor ID is required'), 
 })
-const CreateInvoice = FormSchema.omit({ id: true, date: true })
-const UpdateInvoice = FormSchema.omit({ date: true, id: true })
+
+const CreateEbus = FormSchema.omit({ id: true, date: true })
+const UpdateEbus = FormSchema.omit({ id: true, date: true })
 export type State = {
   errors?: {
-    customerId?: string[]
-    amount?: string[]
+    license?: string[]
+    route?: string[]
+    total_passengers?: string[]
+    current_passengers?: string[]
+    discrepancy?: string[]
     status?: string[]
+    coop_id?: string[]
+    driver_id?: string[]
+    conductor_id?: string[]
   }
   message?: string | null
 }
-
-
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createEbus(prevState: State, formData: FormData) {
   // Validate form fields using Zod
-  const validatedFields = CreateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
+  const validatedFields = CreateEbus.safeParse({
+    license: formData.get('license'),
+    route: formData.get('route'),
+    total_passengers: formData.get('total_passengers'),
+    current_passengers: formData.get('current_passengers'),
+    discrepancy: formData.get('discrepancy'),
     status: formData.get('status'),
+    coop_id: formData.get('coop_id'),  // Assuming coop_id is part of the form
+    driver_id: formData.get('driver_id'),  // Assuming driver_id is part of the form
+    conductor_id: formData.get('conductor_id'),  // Assuming conductor_id is part of the form
   })
-  // If form validation fails, return errors early. Otherwise, continue.
+
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
+      message: 'Missing Fields. Failed to Create Ebus.',
     }
   }
-  // Prepare data for insertion into the database
-  const { customerId, amount, status } = validatedFields.data
-  const amountInCents = amount * 100
-  const date = new Date().toISOString().split('T')[0]
-  // Insert data into the database
+
+  const {
+    license,
+    route,
+    total_passengers,
+    current_passengers,
+    discrepancy,
+    status,
+    coop_id,
+    driver_id,
+    conductor_id,
+  } = validatedFields.data
+
   try {
-    await db.insert(invoices).values({
-      customer_id: customerId,
-      amount: amountInCents,
+    // Insert the new ebus data into the database
+    const result = await db.insert(ebus).values({
+      license,
+      route,
+      total_passengers,
+      current_passengers,
+      discrepancy,
       status,
-      date,
+      coop_id,  
+      driver_id,  
+      conductor_id,  
     })
+
+    // // // If needed, insert the sensor data as well
+    // // // (Example: You can handle this part if there's a sensor entry associated with the ebus)
+    // // const sensorData = {
+    // //   ebus_id: result[0].id,  // The id of the created ebus
+    // //   latitude: 123456,  // Example value, replace with real sensor data
+    // //   longitude: 654321,  // Example value, replace with real sensor data
+    // //   passenger_count: current_passengers,  // Example value, replace with real sensor data
+    // //   timestamp: new Date().toISOString(),  // Current timestamp
+    // // }
+
+    // await db.insert(SensorData).values(sensorData)
+
   } catch (error) {
-    // If a database error occurs, return a more specific error.
     return {
-      message: 'Database Error: Failed to Create Invoice.',
+      message: 'Database Error: Failed to Create Ebus.',
     }
   }
-  // Revalidate the cache for the invoices page and redirect the user.
+
+  // Revalidate the cache for the modern jeeps page and redirect the user
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
 }
 
-
-export async function updateInvoice(
+export async function updateEbus(
   id: string,
   prevState: State,
   formData: FormData
 ) {
-  const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
+  // Validate the incoming form data using the UpdateEbus schema
+  const validatedFields = UpdateEbus.safeParse({
+    license: formData.get('license'),
+    route: formData.get('route'),
+    total_passengers: formData.get('total_passengers'),
+    current_passengers: formData.get('current_passengers'),
+    discrepancy: formData.get('discrepancy'),
     status: formData.get('status'),
   })
+
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
+      message: 'Missing Fields. Failed to Update Ebus.',
     }
   }
-  const { customerId, amount, status } = validatedFields.data
-  const amountInCents = amount * 100
+
+  const { license, route, total_passengers, current_passengers, discrepancy, status } = validatedFields.data
+
+  const totalPassengers = Number(total_passengers)
+  const currentPassengers = Number(current_passengers)
+  const discrepancyCount = Number(discrepancy)
+
   try {
     await db
-      .update(invoices)
+      .update(ebus)
       .set({
-        customer_id: customerId,
-        amount: amountInCents,
+        license,
+        route,
+        total_passengers: totalPassengers,
+        current_passengers: currentPassengers,
+        discrepancy: discrepancyCount,
         status,
       })
-      .where(eq(invoices.id, id))
+      .where(eq(ebus.id, id))
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.' }
+    return { message: 'Database Error: Failed to Update Ebus.' }
   }
+
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
 }
 
 
-export async function fetchInvoiceById(id: string) {
-  try {
-    const data = await db
-      .select({
-        id: invoices.id,
-        customer_id: invoices.customer_id,
-        amount: invoices.amount,
-        status: invoices.status,
-        date: invoices.date,
-      })
-      .from(invoices)
-      .where(eq(invoices.id, id))
-    const invoice = data.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      status: invoice.status === 'paid' ? 'paid' : 'pending',
-      amount: invoice.amount / 100,
-    }))
-    return invoice[0] as InvoiceForm
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch invoice.')
-  }
-}
+// export async function fetchInvoiceById(id: string) {
+//   try {
+//     const data = await db
+//       .select({
+//         id: invoices.id,
+//         customer_id: invoices.customer_id,
+//         amount: invoices.amount,
+//         status: invoices.status,
+//         date: invoices.date,
+//       })
+//       .from(invoices)
+//       .where(eq(invoices.id, id))
+//     const invoice = data.map((invoice) => ({
+//       ...invoice,
+//       // Convert amount from cents to dollars
+//       status: invoice.status === 'paid' ? 'paid' : 'pending',
+//       amount: invoice.amount / 100,
+//     }))
+//     return invoice[0] as InvoiceForm
+//   } catch (error) {
+//     console.error('Database Error:', error)
+//     throw new Error('Failed to fetch invoice.')
+//   }
+// }
