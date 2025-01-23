@@ -1,5 +1,5 @@
 import '@/db/env-config'
-import { driverData, conductorData, coopData, ebusData, sensorData, revenue } from '@/lib/placeholder-data'
+import { driverData, conductorData, coopData, ebusData, sensorData, revenue, users } from '@/lib/placeholder-data'
 import db from './drizzle'
 import * as schema from './schema'
 import { exit } from 'process'
@@ -14,6 +14,7 @@ const main = async () => {
       await tx.delete(schema.conductors)
       await tx.delete(schema.drivers)
       await tx.delete(schema.revenue)
+      await tx.delete(schema.users)
 
       // Insert new placeholder data into the relevant tables
       await tx.insert(schema.drivers).values(driverData)
@@ -22,6 +23,7 @@ const main = async () => {
       await tx.insert(schema.ebus).values(ebusData)
       await tx.insert(schema.sensorData).values(sensorData)
       await tx.insert(schema.revenue).values(revenue)
+      await tx.insert(schema.users).values(users)
     })
 
     console.log('Database seeded successfully')
