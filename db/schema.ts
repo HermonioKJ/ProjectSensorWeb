@@ -65,9 +65,9 @@ export const ebus = pgTable('ebus', {
   current_passengers: integer('current_passengers').notNull(),
   discrepancy: integer('discrepancy').notNull(),
   license: varchar('license', { length: 255 }).notNull(),
-  coop_id: uuid('coop_id').notNull(),
-  driver_id: uuid('driver_id').notNull(),  
-  conductor_id: uuid('conductor_id').notNull(),
+  coop_id: uuid('coop_id'),
+  driver_id: uuid('driver_id'),  
+  conductor_id: uuid('conductor_id'),
   dateRegistered: timestamp('dateRegistered').default(sql`CURRENT_TIMESTAMP`).notNull(),
 })
 
@@ -76,10 +76,10 @@ export const sensorData = pgTable('sensorData', {
     .default(sql`uuid_generate_v4()`)
     .primaryKey()
     .notNull(),
-  ebus_id: uuid('ebus_id').notNull(),  
-  latitude: doublePrecision('latitude').notNull(), 
-  longitude: doublePrecision('longitude').notNull(),
-  passenger_count: integer('passenger_count').notNull(),
+  ebus_id: uuid('ebus_id'),  
+  latitude: doublePrecision('latitude'), 
+  longitude: doublePrecision('longitude'),
+  passenger_count: integer('passenger_count'),
   timestamp: timestamp('timestamp').notNull(),  
 })
 
