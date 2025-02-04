@@ -101,7 +101,8 @@ export async function fetchFilteredEbus(query: string, currentPage: number) {
         conductor_name: conductors.name, 
         TotalPass: ebus.total_passengers,
         CurrentPass: ebus.current_passengers,
-        Disc: ebus.discrepancy
+        Disc: ebus.discrepancy,
+        timeRegistered: ebus.dateRegistered
       })
       .from(ebus)
       .leftJoin(sensorData, eq(sensorData.ebus_id, ebus.id))
@@ -118,6 +119,7 @@ export async function fetchFilteredEbus(query: string, currentPage: number) {
           ilike(conductors.name, sql`${`%${query}%`}`) // Search by conductor name
         )
       )
+      .orderBy(desc(ebus.dateRegistered))
       .limit(ITEMS_PER_PAGE)
       .offset(offset)
 
