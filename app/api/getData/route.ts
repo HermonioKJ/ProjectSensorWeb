@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     }
 
     // Ensure the id is in the correct UUID format
-    const uuidId = id ? id : uuidv4();  // Ensure the UUID is passed or a new one is generated.
+    const uuidId = id ? id : uuidv4(); 
 
     // Check if the ebus_id exists in the 'ebus' table
     const existingEbus = await db
@@ -54,9 +54,11 @@ export async function POST(request: Request) {
           route: 'None',  // Default value
           status: 'inactive',  // Default value
           license: 'None',  // Default value
-          current_passengers: 0, 
+          current_passengers: passenger_count, 
           discrepancy: 0,
-
+          conductor_id: '123e4567-e89b-12d3-a456-426614174000',
+          coop_id: '123e4567-e89b-12d3-a456-426614174000',
+          driver_id: '123e4567-e89b-12d3-a456-426614174000',
           total_passengers: 0,  // Ensure a value is provided for 'total_passengers'
         })
         .returning();  // Insert new ebus record
@@ -101,7 +103,14 @@ export async function POST(request: Request) {
         passenger_count,
         timestamp: ts,
       })
-      .where(eq(sensorData.id, uuidId));  // Update where sensor_id matches
+      .where(eq(sensorData.id, uuidId)); 
+    
+    await db
+      .update(ebus)
+      .set({
+        current_passengers: passenger_count,
+      })
+      .where(eq(ebus.id, ebus_id)); 
 
     return new Response(
       JSON.stringify({ success: true, message: 'Sensor data updated successfully' }),

@@ -65,9 +65,9 @@ export const ebus = pgTable('ebus', {
   current_passengers: integer('current_passengers').notNull(),
   discrepancy: integer('discrepancy').notNull(),
   license: varchar('license', { length: 255 }).notNull(),
-  coop_id: uuid('coop_id'),
-  driver_id: uuid('driver_id'),  
-  conductor_id: uuid('conductor_id'),
+  coop_id: uuid('coop_id').notNull(),
+  driver_id: uuid('driver_id').notNull(),  
+  conductor_id: uuid('conductor_id').notNull(),
   dateRegistered: timestamp('dateRegistered').default(sql`CURRENT_TIMESTAMP`).notNull(),
 })
 

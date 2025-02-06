@@ -55,14 +55,24 @@ export async function fetchLatestEbus() {
         route: ebus.route,
         total_passengers: ebus.total_passengers,
         current_passengers: ebus.current_passengers,
-        id: ebus.id,
-        discrepancy: ebus.discrepancy
+        date: ebus.dateRegistered,
+        discrepancy: ebus.discrepancy,
+        id: ebus.id
       })
       .from(ebus)
-      .orderBy(desc(ebus.id)) 
+      .orderBy(desc(ebus.dateRegistered)) 
     .limit(5)
+
+      console.log('Fetched Ebus Data:', data);
+
+      // Ensure data is an array and not empty
+      if (!Array.isArray(data) || data.length === 0) {
+        console.warn('No data found for the latest ebuses.');
+        return [];
+      }
+      
       const latestEbus = data.map((bus) => ({
-        ...bus, //for formatting here
+        ...bus,
         total_passengers: bus.total_passengers,
         current_passengers: bus.current_passengers,
       }))
