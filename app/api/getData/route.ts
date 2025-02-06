@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const uuidId = id ? id : uuidv4();  // Ensure the UUID is passed or a new one is generated.
 
     // Check if the ebus_id exists in the 'ebus' table
-    let existingEbus = await db
+    const existingEbus = await db
       .select()
       .from(ebus)
       .where(eq(ebus.id, ebus_id))
