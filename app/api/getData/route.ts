@@ -16,23 +16,16 @@ export async function POST(request: Request) {
     const latitude = parseFloat(searchParams.get('latitude') || '');
     const longitude = parseFloat(searchParams.get('longitude') || '');
     const passenger_count = parseInt(searchParams.get('passenger_count') || '', 10);
-    const timestamp = searchParams.get('timestamp');
 
     // Validate required parameters
-    if (!id || !ebus_id || isNaN(latitude) || isNaN(longitude) || isNaN(passenger_count) || !timestamp) {
+    if (!id || !ebus_id || isNaN(latitude) || isNaN(longitude) || isNaN(passenger_count)) {
       return new Response(
         JSON.stringify({ success: false, message: 'Missing or invalid parameters' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const ts = new Date(timestamp);
-    if (isNaN(ts.getTime())) {
-      return new Response(
-        JSON.stringify({ success: false, message: 'Invalid timestamp format' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    const ts = new Date();
 
     // Ensure the id is in the correct UUID format
     const uuidId = id ? id : uuidv4(); 
