@@ -237,8 +237,12 @@ export async function createEbus(prevState: State, formData: FormData) {
   } = validatedFields.data
 
   try {
-    // Insert the new ebus data into the database
+
+    const dateSuffix = new Date().toISOString().slice(5, 10).replace('-', '');
+    const stringEbusId = `${license}-${dateSuffix}`; 
+
     const result = await db.insert(ebus).values({
+      id: stringEbusId,
       license,
       route,
       total_passengers,
