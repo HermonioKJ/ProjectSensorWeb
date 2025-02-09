@@ -1,11 +1,11 @@
 import LatestEbus from '@/components/shared/dashboard/latest-ebus'
-import NameCard from '@/components/shared/dashboard/name-card-wrapper'
+// import NameCard from '@/components/shared/dashboard/name-card-wrapper'
 import RevenueChartWrapper from '@/components/shared/dashboard/revenue-chart-wrapper'
 import StatCardsWrapper from '@/components/shared/dashboard/stat-cards-wrapper'
-import ViewButton from '@/components/shared/dashboard/ViewButton'
+// import ViewButton from '@/components/shared/dashboard/ViewButton'
 import { roboto } from '@/components/shared/fonts'
 import { CardsSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/components/shared/skeletons'
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button'
 import { Suspense } from 'react'
 
 export default async function Page() {
