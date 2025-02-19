@@ -140,11 +140,11 @@ export async function POST(request: Request) {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Transaction failed:", error);
+    console.error("Insert error:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        message: error instanceof Error ? error.message : "Error saving data",
+        message: error instanceof Error || "Error saving data",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
