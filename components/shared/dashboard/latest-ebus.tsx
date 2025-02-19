@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { fetchLatestEbus } from '@/lib/actions/invoice-actions'
+import { fetch5LatestEbus } from '@/lib/actions/dashboard-actions'
 import { roboto } from '../fonts'
 import { cn } from '@/lib/utils'
 import { RefreshCcw } from 'lucide-react'
@@ -7,7 +7,7 @@ import { Key } from 'react'
 import ViewButton from './ViewButton'
 
 export default async function LatestEbus() {
-  const ebusData = await fetchLatestEbus()
+  const ebusData = await fetch5LatestEbus()
   return (
     <Card className="flex w-full flex-col md:col-span-4">
       <CardHeader>

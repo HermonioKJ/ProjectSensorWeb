@@ -1,6 +1,6 @@
 import Breadcrumbs from '@/components/shared/buslist/breadcrumbs'
 import EditEbusForm from '@/components/shared/buslist/edit-form'
-import { fetchebus } from '@/lib/actions/ebus-action'
+import { editfetchebus, fetchebus } from '@/lib/actions/edit-ebus-actions'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -11,9 +11,8 @@ export const metadata: Metadata = {
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
-  const [ebus] = await fetchebus()
+  const [ebus] = await editfetchebus(id)
 
-  // If no invoice is found, show 404
   if (!ebus) {
     notFound()
   }

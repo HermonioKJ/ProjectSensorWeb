@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { fetchCardStat } from '@/lib/actions/invoice-actions'
+import { fetchCardStat } from '@/lib/actions/dashboard-actions'
 import { BanknoteIcon, ClockIcon, InboxIcon, UsersIcon } from 'lucide-react' // icon
 import { roboto } from '../fonts'
 import { useEffect, useState } from 'react';

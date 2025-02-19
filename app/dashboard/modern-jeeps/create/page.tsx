@@ -1,6 +1,6 @@
 import Breadcrumbs from '@/components/shared/buslist/breadcrumbs'
 import Form from '@/components/shared/buslist/create-form'
-import { fetchebus } from '@/lib/actions/ebus-action'
+import { fetchebus } from '@/lib/actions/edit-ebus-actions'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

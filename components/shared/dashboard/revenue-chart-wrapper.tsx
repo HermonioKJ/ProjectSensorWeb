@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { fetchRevenue } from '@/lib/actions/invoice-actions'
+import { fetchRevenue } from '@/lib/actions/chart-actions'
 import { roboto } from '../fonts'
 import RevenueChart from './revenue-chart'
 

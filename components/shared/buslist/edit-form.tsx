@@ -1,25 +1,20 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { State, updateEbus } from '@/lib/actions/invoice-actions'
+import { State, updateEbus } from '@/lib/actions/modern-jeep-list-actions'
 import { EbusForm } from '@/types'
 import { CheckIcon, ClockIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useActionState } from 'react'
 
-export default function EditEbusForm({
-  ebus,
-}: {
-  ebus: EbusForm
-}) {
+export default function EditEbusForm({ebus,}: {ebus: EbusForm}) {
   const initialState: State = { message: null, errors: {} }
   const updateEbusWithId = updateEbus.bind(null, ebus.id)
   const [state, formAction] = useActionState(updateEbusWithId, initialState)
 
-  // Initialize local state for form fields
+  // Local state for form fields, ensuring it updates when `ebus` changes
   const [formData, setFormData] = useState<EbusForm>(ebus)
 
-  // Update formData when ebus prop changes
   useEffect(() => {
     setFormData(ebus)
   }, [ebus])
@@ -45,7 +40,7 @@ export default function EditEbusForm({
               id="license"
               name="license"
               type="text"
-              value={formData.license} // Controlled component
+              value={formData.license} // Now using formData
               onChange={handleChange}
               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
               aria-describedby="license-error"
@@ -71,7 +66,7 @@ export default function EditEbusForm({
             id="route"
             name="route"
             type="text"
-            value={formData.route} // Controlled component
+            value={formData.route} // Now using formData
             onChange={handleChange}
             className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
             aria-describedby="route-error"
@@ -95,7 +90,7 @@ export default function EditEbusForm({
             id="total_passengers"
             name="total_passengers"
             type="number"
-            value={formData.total_passengers} // Controlled component
+            value={formData.total_passengers} // Now using formData
             onChange={handleChange}
             className="peer block w-full rounded-md border py-2 text-sm outline-2"
             aria-describedby="total_passengers-error"
@@ -103,54 +98,6 @@ export default function EditEbusForm({
           <div id="total_passengers-error" aria-live="polite" aria-atomic="true">
             {state.errors?.total_passengers &&
               state.errors.total_passengers.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-          </div>
-        </div>
-
-        {/* Current Passengers */}
-        <div className="mb-4">
-          <label htmlFor="current_passengers" className="mb-2 block text-sm font-medium">
-            Current Passengers
-          </label>
-          <input
-            id="current_passengers"
-            name="current_passengers"
-            type="number"
-            value={formData.current_passengers} // Controlled component
-            onChange={handleChange}
-            className="peer block w-full rounded-md border py-2 text-sm outline-2"
-            aria-describedby="current_passengers-error"
-          />
-          <div id="current_passengers-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.current_passengers &&
-              state.errors.current_passengers.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-          </div>
-        </div>
-
-        {/* Discrepancy */}
-        <div className="mb-4">
-          <label htmlFor="discrepancy" className="mb-2 block text-sm font-medium">
-            Discrepancy
-          </label>
-          <input
-            id="discrepancy"
-            name="discrepancy"
-            type="number"
-            value={formData.discrepancy} // Controlled component
-            onChange={handleChange}
-            className="peer block w-full rounded-md border py-2 text-sm outline-2"
-            aria-describedby="discrepancy-error"
-          />
-          <div id="discrepancy-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.discrepancy &&
-              state.errors.discrepancy.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
@@ -171,7 +118,7 @@ export default function EditEbusForm({
                   name="status"
                   type="radio"
                   value="inactive"
-                  checked={formData.status === 'inactive'}
+                  checked={formData.status === 'inactive'} // Now using formData
                   onChange={handleChange}
                   className="h-4 w-4 focus:ring-2"
                 />
@@ -188,7 +135,7 @@ export default function EditEbusForm({
                   name="status"
                   type="radio"
                   value="active"
-                  checked={formData.status === 'active'} // Controlled component
+                  checked={formData.status === 'active'} // Now using formData
                   onChange={handleChange}
                   className="h-4 w-4 focus:ring-2"
                 />

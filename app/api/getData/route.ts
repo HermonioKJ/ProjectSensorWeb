@@ -1,119 +1,152 @@
-import { sensorData, ebus } from '@/db/schema';  // Import the 'ebus' table schema
+import { sensorData, devices, ebus } from '@/db/schema';  
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { eq } from 'drizzle-orm';
-import { v4 as uuidv4 } from 'uuid';
+import { eq, desc } from 'drizzle-orm';
 
 const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
 const db = drizzle(pool);
 
 export async function POST(request: Request) {
   try {
-    // Parse query parameters from request URL
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    const ebus_id = searchParams.get('ebus_id');
-    const latitude = parseFloat(searchParams.get('latitude') || '');
-    const longitude = parseFloat(searchParams.get('longitude') || '');
-    const passenger_count = parseInt(searchParams.get('passenger_count') || '', 10);
+    const body = await request.json(); 
 
-    // Validate required parameters
-    if (!id || !ebus_id || isNaN(latitude) || isNaN(longitude) || isNaN(passenger_count)) {
+    if (!body.Devices || !Array.isArray(body.Devices)) {
       return new Response(
-        JSON.stringify({ success: false, message: 'Missing or invalid parameters' }),
+        JSON.stringify({ success: false, message: 'Invalid or missing Devices array' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     const ts = new Date();
 
-    // Ensure the id is in the correct UUID format
-    const uuidId = id ? id : uuidv4(); 
+    await db.transaction(async (tx) => {
+      for (const device of body.Devices) {
+        const { ebus_id, main } = device;
 
-    // Check if the ebus_id exists in the 'ebus' table
-    const existingEbus = await db
-      .select()
-      .from(ebus)
-      .where(eq(ebus.id, ebus_id))
-      .limit(1)
-      .execute();
+        //check if empty
+        if (!ebus_id || !main) {
+          console.warn(`Skipping device due to missing ebus_id or main: ${JSON.stringify(device)}`);
+          continue;
+        }
 
-    if (existingEbus.length === 0) {
-      // If the ebus_id does not exist, insert a new entry into the 'ebus' table
-      await db
-        .insert(ebus)
-        .values({
-          id: ebus_id,
-          route: 'None',  // Default value
-          status: 'inactive',  // Default value
-          license: 'None',  // Default value
-          current_passengers: passenger_count, 
-          discrepancy: 0,
-          conductor_id: '123e4567-e89b-12d3-a456-426614174000',
-          coop_id: '123e4567-e89b-12d3-a456-426614174000',
-          driver_id: '123e4567-e89b-12d3-a456-426614174000',
-          total_passengers: 0,  // Ensure a value is provided for 'total_passengers'
-        })
-        .returning();  // Insert new ebus record
-    }
+        // Check if body of json is empty
+        const { longitude, latitude, speed, passenger, status } = main;
 
-    // Check if the sensor_id exists in the 'sensorData' table
-    const existingSensor = await db
-      .select()
-      .from(sensorData)
-      .where(eq(sensorData.id, uuidId))  // Ensure we are comparing UUID correctly
-      .limit(1)
-      .execute();
+        // Generate new sensorID
+        const latestSensor = await db
+        .select({ id: sensorData.id })
+        .from(sensorData)
+        .orderBy(desc(sensorData.id)) 
+        .limit(1)
+        .execute();
 
-    if (existingSensor.length === 0) {
-      // If no existing sensor found, create a new sensor entry
-      const result = await db
-        .insert(sensorData)
-        .values({
-          id: uuidId,  // Use the provided or generated UUID
-          ebus_id,
-          latitude,
-          longitude,
-          passenger_count,
+        let newSensorId = 'S1'; 
+
+        if (latestSensor.length > 0) {
+          const lastId = latestSensor[0].id;
+          const lastNum = parseInt(lastId.replace('S', ''), 10); 
+          newSensorId = `S${lastNum + 1}`; 
+        }
+
+        // Generate new deviceID
+        const latestDevice = await db
+        .select({ id: devices.id })
+        .from(devices)
+        .orderBy(desc(devices.id)) 
+        .limit(1)
+        .execute();
+
+        let newDeviceID = 'D1'; 
+
+        if (latestDevice.length > 0) {
+          const lastId = latestDevice[0].id;
+          const lastNum = parseInt(lastId.replace('D', ''), 10); 
+          newDeviceID = `D${lastNum + 1}`; 
+        }
+        
+
+        if (
+          latitude === undefined ||
+          longitude === undefined ||
+          speed === undefined ||
+          passenger === undefined
+        ) {
+          console.warn(`Skipping device ${ebus_id} due to missing required data`);
+          continue;
+        }
+
+        // Ensure correct data types
+        const formattedData = {
+          ebus_id: ebus_id.trim(),
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          speed: parseFloat(speed),
+          passenger_count: parseInt(passenger, 10),
+          status: status || "unknown",
+        };
+
+
+        // Ensure the ebus exists
+        const existingEbus = await tx.select().from(ebus).where(eq(ebus.id, formattedData.ebus_id)).limit(1).execute();
+        if (existingEbus.length === 0) {
+          throw new Error(`Ebus ID ${formattedData.ebus_id} doesn't exist`);
+        }
+
+        // Ensure the device exists
+        const existingDevice = await tx.select().from(devices).where(eq(devices.ebus_id, formattedData.ebus_id)).limit(1).execute();
+        if (existingDevice.length === 0) {
+          await tx.insert(devices).values({
+            id: newDeviceID,
+            ebus_id: formattedData.ebus_id,
+            registered_at: ts,
+          });
+          await tx.insert(sensorData).values({
+            id: newSensorId,
+            latitude: formattedData.latitude,
+            longitude: formattedData.longitude,
+            passenger_count: formattedData.passenger_count,
+            speed: formattedData.speed,
+            status: formattedData.status,
+            device_id:newDeviceID,
+            timestamp: ts,
+          });
+          console.log("New device inserted:", formattedData.ebus_id);
+        }
+
+        // Update the sensordata
+        await tx.update(sensorData).set({
+          latitude: formattedData.latitude,
+          longitude: formattedData.longitude,
+          speed: formattedData.speed,
+          passenger_count: formattedData.passenger_count,
+          status: formattedData.status,
           timestamp: ts,
         })
-        .returning();  // Get the inserted record, including the generated UUID
+        .where(
+          eq(sensorData.device_id, 
+             tx.select({ id: devices.id })
+               .from(devices)
+               .where(eq(devices.ebus_id, formattedData.ebus_id))
+               .limit(1) 
+          ));
 
-      const newSensorId = result[0].id; // Assuming 'id' is the UUID column
-
-      return new Response(
-        JSON.stringify({ success: true, sensor_id: newSensorId, message: 'New sensor data saved successfully' }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // If the sensor exists, update the existing record
-    await db
-      .update(sensorData)
-      .set({
-        latitude,
-        longitude,
-        passenger_count,
-        timestamp: ts,
-      })
-      .where(eq(sensorData.id, uuidId)); 
-    
-    await db
-      .update(ebus)
-      .set({
-        current_passengers: passenger_count,
-      })
-      .where(eq(ebus.id, ebus_id)); 
+        // Update ebus passenger count
+        await tx.update(ebus).set({ current_passengers: formattedData.passenger_count}).where(eq(ebus.id, formattedData.ebus_id));
+      }
+    });
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Sensor data updated successfully' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ success: true, message: "Sensor data processed successfully" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error('Insert error:', error);
+    console.error("Transaction failed:", error);
     return new Response(
-      JSON.stringify({ success: false, message: 'Error saving data' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        success: false,
+        message: error instanceof Error ? error.message : "Error saving data",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { createEbus, State } from '@/lib/actions/invoice-actions'
+import { createEbus, State } from '@/lib/actions/modern-jeep-list-actions'
 import { EbusForm } from '@/types'
 import { CheckIcon, ClockIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -88,126 +88,6 @@ export default function Form({ ebus }: { ebus: EbusForm[] }) {
           </div>
         </div>
 
-        {/* Current Passengers */}
-        <div className="mb-4">
-          <label htmlFor="current_passengers" className="mb-2 block text-sm font-medium">
-            Current Passengers
-          </label>
-          <div className="relative">
-            <input
-              id="current_passengers"
-              name="current_passengers"
-              type="number"
-              placeholder="Enter current passengers"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
-              aria-describedby="current_passengers-error"
-            />
-          </div>
-          <div id="current_passengers-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.current_passengers && state.errors.current_passengers.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Discrepancy */}
-        <div className="mb-4">
-          <label htmlFor="discrepancy" className="mb-2 block text-sm font-medium">
-            Discrepancy
-          </label>
-          <div className="relative">
-            <input
-              id="discrepancy"
-              name="discrepancy"
-              type="number"
-              placeholder="Enter discrepancy"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
-              aria-describedby="discrepancy-error"
-            />
-          </div>
-          <div id="discrepancy-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.discrepancy && state.errors.discrepancy.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Coop ID */}
-        <div className="mb-4">
-          <label htmlFor="coop_id" className="mb-2 block text-sm font-medium">
-            Coop ID
-          </label>
-          <div className="relative">
-            <input
-              id="coop_id"
-              name="coop_id"
-              type="text"
-              placeholder="Enter coop ID"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
-              aria-describedby="coop_id-error"
-            />
-          </div>
-          <div id="coop_id-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.coop_id && state.errors.coop_id.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Driver ID */}
-        <div className="mb-4">
-          <label htmlFor="driver_id" className="mb-2 block text-sm font-medium">
-            Driver ID
-          </label>
-          <div className="relative">
-            <input
-              id="driver_id"
-              name="driver_id"
-              type="text"
-              placeholder="Enter driver ID"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
-              aria-describedby="driver_id-error"
-            />
-          </div>
-          <div id="driver_id-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.driver_id && state.errors.driver_id.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Conductor ID */}
-        <div className="mb-4">
-          <label htmlFor="conductor_id" className="mb-2 block text-sm font-medium">
-            Conductor ID
-          </label>
-          <div className="relative">
-            <input
-              id="conductor_id"
-              name="conductor_id"
-              type="text"
-              placeholder="Enter conductor ID"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
-              aria-describedby="conductor_id-error"
-            />
-          </div>
-          <div id="conductor_id-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.conductor_id && state.errors.conductor_id.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        </div>
-
         {/* Status (Active/Inactive) */}
         <fieldset>
           <legend className="mb-2 block text-sm font-medium">
@@ -267,3 +147,125 @@ export default function Form({ ebus }: { ebus: EbusForm[] }) {
     </form>
   )
 }
+
+
+// // 
+//         {/* Current Passengers */}
+//         <div className="mb-4">
+//           <label htmlFor="current_passengers" className="mb-2 block text-sm font-medium">
+//             Current Passengers
+//           </label>
+//           <div className="relative">
+//             <input
+//               id="current_passengers"
+//               name="current_passengers"
+//               type="number"
+//               placeholder="Enter current passengers"
+//               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+//               aria-describedby="current_passengers-error"
+//             />
+//           </div>
+//           <div id="current_passengers-error" aria-live="polite" aria-atomic="true">
+//             {state.errors?.current_passengers && state.errors.current_passengers.map((error: string) => (
+//               <p className="mt-2 text-sm text-red-500" key={error}>
+//                 {error}
+//               </p>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* Discrepancy */}
+//         <div className="mb-4">
+//           <label htmlFor="discrepancy" className="mb-2 block text-sm font-medium">
+//             Discrepancy
+//           </label>
+//           <div className="relative">
+//             <input
+//               id="discrepancy"
+//               name="discrepancy"
+//               type="number"
+//               placeholder="Enter discrepancy"
+//               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+//               aria-describedby="discrepancy-error"
+//             />
+//           </div>
+//           <div id="discrepancy-error" aria-live="polite" aria-atomic="true">
+//             {state.errors?.discrepancy && state.errors.discrepancy.map((error: string) => (
+//               <p className="mt-2 text-sm text-red-500" key={error}>
+//                 {error}
+//               </p>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* Coop ID */}
+//         <div className="mb-4">
+//           <label htmlFor="coop_id" className="mb-2 block text-sm font-medium">
+//             Coop ID
+//           </label>
+//           <div className="relative">
+//             <input
+//               id="coop_id"
+//               name="coop_id"
+//               type="text"
+//               placeholder="Enter coop ID"
+//               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+//               aria-describedby="coop_id-error"
+//             />
+//           </div>
+//           <div id="coop_id-error" aria-live="polite" aria-atomic="true">
+//             {state.errors?.coop_id && state.errors.coop_id.map((error: string) => (
+//               <p className="mt-2 text-sm text-red-500" key={error}>
+//                 {error}
+//               </p>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* Driver ID */}
+//         <div className="mb-4">
+//           <label htmlFor="driver_id" className="mb-2 block text-sm font-medium">
+//             Driver ID
+//           </label>
+//           <div className="relative">
+//             <input
+//               id="driver_id"
+//               name="driver_id"
+//               type="text"
+//               placeholder="Enter driver ID"
+//               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+//               aria-describedby="driver_id-error"
+//             />
+//           </div>
+//           <div id="driver_id-error" aria-live="polite" aria-atomic="true">
+//             {state.errors?.driver_id && state.errors.driver_id.map((error: string) => (
+//               <p className="mt-2 text-sm text-red-500" key={error}>
+//                 {error}
+//               </p>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* Conductor ID */}
+//         <div className="mb-4">
+//           <label htmlFor="conductor_id" className="mb-2 block text-sm font-medium">
+//             Conductor ID
+//           </label>
+//           <div className="relative">
+//             <input
+//               id="conductor_id"
+//               name="conductor_id"
+//               type="text"
+//               placeholder="Enter conductor ID"
+//               className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+//               aria-describedby="conductor_id-error"
+//             />
+//           </div>
+//           <div id="conductor_id-error" aria-live="polite" aria-atomic="true">
+//             {state.errors?.conductor_id && state.errors.conductor_id.map((error: string) => (
+//               <p className="mt-2 text-sm text-red-500" key={error}>
+//                 {error}
+//               </p>
+//             ))}
+//           </div>
+//         </div>

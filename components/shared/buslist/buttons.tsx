@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { deleteEbus } from '@/lib/actions/invoice-actions'
+import { deleteEbus } from '@/lib/actions/modern-jeep-list-actions'
 import { PencilIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 

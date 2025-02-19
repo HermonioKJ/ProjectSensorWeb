@@ -23,8 +23,6 @@ export type FormattedCustomersTable = {
     license: string
     route: string
     total_passengers: number
-    current_passengers: number
-    discrepancy: number
     status: string
     dateRegistered: Date
   }
