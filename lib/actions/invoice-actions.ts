@@ -1,7 +1,7 @@
 'use server'
 
 import db from '@/db/drizzle'
-import { revenue, ebus, drivers, coops, conductors, sensorData } from '@/db/schema'
+import { revenue, ebus, sensorData } from '@/db/schema'
 import { count, desc, eq, ilike, sql, or, sum } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
@@ -106,27 +106,17 @@ export async function fetchFilteredEbus(query: string, currentPage: number) {
         license: ebus.license,
         route: ebus.route,
         IsActive: ebus.status,
-        coop_name: coops.name,  
-        driver_name: drivers.name, 
-        conductor_name: conductors.name, 
         TotalPass: ebus.total_passengers,
         CurrentPass: ebus.current_passengers,
         Disc: ebus.discrepancy,
         timeRegistered: ebus.dateRegistered
       })
       .from(ebus)
-      .leftJoin(sensorData, eq(sensorData.ebus_id, ebus.id))
-      .leftJoin(coops, eq(coops.id, ebus.coop_id)) // Left join with coop to get the name
-      .leftJoin(drivers, eq(drivers.id, ebus.driver_id)) // Left join with driver to get the name
-      .leftJoin(conductors, eq(conductors.id, ebus.conductor_id)) // Left join with conductor to get the name
       .where(
         or(
           ilike(ebus.license, sql`${`%${query}%`}`),
           ilike(ebus.route, sql`${`%${query}%`}`),
           ilike(ebus.status, sql`${`%${query}%`}`),
-          ilike(coops.name, sql`${`%${query}%`}`), // Search by coop name
-          ilike(drivers.name, sql`${`%${query}%`}`), // Search by driver name
-          ilike(conductors.name, sql`${`%${query}%`}`) // Search by conductor name
         )
       )
       .orderBy(desc(ebus.dateRegistered))
@@ -231,9 +221,6 @@ export async function createEbus(prevState: State, formData: FormData) {
     current_passengers,
     discrepancy,
     status,
-    coop_id,
-    driver_id,
-    conductor_id,
   } = validatedFields.data
 
   try {
@@ -249,9 +236,6 @@ export async function createEbus(prevState: State, formData: FormData) {
       current_passengers,
       discrepancy,
       status,
-      coop_id,  
-      driver_id,  
-      conductor_id,  
     })
 
     // // // If needed, insert the sensor data as well
@@ -324,29 +308,3 @@ export async function updateEbus(
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
 }
-
-
-// export async function fetchInvoiceById(id: string) {
-//   try {
-//     const data = await db
-//       .select({
-//         id: invoices.id,
-//         customer_id: invoices.customer_id,
-//         amount: invoices.amount,
-//         status: invoices.status,
-//         date: invoices.date,
-//       })
-//       .from(invoices)
-//       .where(eq(invoices.id, id))
-//     const invoice = data.map((invoice) => ({
-//       ...invoice,
-//       // Convert amount from cents to dollars
-//       status: invoice.status === 'paid' ? 'paid' : 'pending',
-//       amount: invoice.amount / 100,
-//     }))
-//     return invoice[0] as InvoiceForm
-//   } catch (error) {
-//     console.error('Database Error:', error)
-//     throw new Error('Failed to fetch invoice.')
-//   }
-// }
