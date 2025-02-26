@@ -5,11 +5,22 @@ import { createEbus, State } from '@/lib/actions/modern-jeep-list-actions'
 import { EbusForm } from '@/types'
 import { CheckIcon, ClockIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 export default function Form({ ebus }: { ebus: EbusForm[] }) {
-  const initialState: State = { message: null, errors: {} }
+
+  const initialState: State = { message: null, errors: {}}
   const [state, formAction] = useActionState(createEbus, initialState)
+
+  useEffect(() => {
+    if (!state.message && typeof state.message === 'string') {
+      toast("Ebus created successfully!", {
+        description: "The new ebus has been added.",
+        duration: 5000,
+      });
+    }
+  }, [state]);
 
   return (
     <form action={formAction}>
@@ -21,13 +32,12 @@ export default function Form({ ebus }: { ebus: EbusForm[] }) {
             License No.
           </label>
           <div className="relative">
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 " />
             <input
               id="license"
               name="license"
               type="text"
               placeholder="Enter license plate"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+              className="peer block w-full rounded-md border py-2 px-5 text-sm outline-2"
               aria-describedby="license-error"
             />
           </div>
@@ -51,7 +61,7 @@ export default function Form({ ebus }: { ebus: EbusForm[] }) {
               name="route"
               type="text"
               placeholder="Enter route"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+              className="peer block w-full rounded-md border py-2 px-5 text-sm outline-2"
               aria-describedby="route-error"
             />
           </div>
@@ -75,7 +85,7 @@ export default function Form({ ebus }: { ebus: EbusForm[] }) {
               name="total_passengers"
               type="number"
               placeholder="Enter total passengers"
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+              className="peer block w-full rounded-md border py-2 px-5 text-sm outline-2"
               aria-describedby="total_passengers-error"
             />
           </div>

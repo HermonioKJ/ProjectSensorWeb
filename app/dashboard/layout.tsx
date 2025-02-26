@@ -1,5 +1,6 @@
 import SideNav from '@/components/shared/dashboard/sidenav'
 import TopBar from '@/components/shared/dashboard/top-bar'
+import { Toaster } from 'sonner'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         
         {/* Main content area */}
         <div className="flex-grow p-6 md:overflow-y-auto">
+          <Toaster position='bottom-right'></Toaster>
           {children}
         </div>
       </div>

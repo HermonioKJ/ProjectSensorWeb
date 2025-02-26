@@ -1,6 +1,11 @@
 import { fetchFilteredEbus } from '@/lib/actions/modern-jeep-list-actions'
 import InvoiceStatus from './status'
-import { DeleteInvoice, UpdateInvoice } from './buttons'
+import { DeleteEbus, UpdateEbus } from './buttons'
+import { Dialog, DialogClose, DialogDescription, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog'
+import { DialogContent, DialogHeader } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { TrashIcon } from 'lucide-react'
+
 export default async function EbusTable({
   query,
   currentPage,
@@ -33,8 +38,27 @@ export default async function EbusTable({
                       <p className='text-red-500'>{ebus.Disc}</p>
                     </div>
                     <div className="flex justify-end gap-2">
-                      <UpdateInvoice id={ebus.id} />
-                      <DeleteInvoice id={ebus.id} />
+                      <UpdateEbus id={ebus.id} />
+                      <Dialog>
+                        <DialogTrigger asChild>
+                        <Button variant="outline" type="submit">
+                          <span className="sr-only">Delete</span>
+                          <TrashIcon className="w-5" />
+                      </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader className='gap-y-5'>
+                            <DialogTitle className='font-bold'>Delete Modern Jeep entry</DialogTitle>
+                            <DialogDescription>Are you sure to delete this modern jeep entry?</DialogDescription>
+                            <div className='flex flex-row gap-x-5 justify-end'>
+                              <DialogClose asChild>
+                              <Button className='sm:max-w-[75px] w-[75px]'>No</Button>
+                              </DialogClose>
+                            <DeleteEbus id={ebus.id}></DeleteEbus>
+                            </div>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </div>
@@ -97,8 +121,27 @@ export default async function EbusTable({
                     </td>
                     <td className="whitespace-nowrap py-3 pl-6 pr-3">
                       <div className="flex justify-end gap-3">
-                        <UpdateInvoice id={ebus.id} />
-                        <DeleteInvoice id={ebus.id} />
+                        <UpdateEbus id={ebus.id} />
+                      <Dialog>
+                        <DialogTrigger asChild>
+                        <Button variant="outline" type="submit">
+                          <span className="sr-only">Delete</span>
+                          <TrashIcon className="w-5" />
+                      </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader className='gap-y-5'>
+                            <DialogTitle className='font-bold'>Delete Modern Jeep entry</DialogTitle>
+                            <DialogDescription>Are you sure to delete this modern jeep entry?</DialogDescription>
+                            <div className='flex flex-row gap-x-5 justify-end'>
+                              <DialogClose asChild>
+                              <Button className='sm:max-w-[75px] w-[75px]'>No</Button>
+                              </DialogClose>
+                            <DeleteEbus id={ebus.id}></DeleteEbus>
+                            </div>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
                       </div>
                     </td>
                   </tr>

@@ -40,12 +40,11 @@ export default function EditEbusForm({ebus,}: {ebus: EbusForm}) {
               id="license"
               name="license"
               type="text"
-              value={formData.license} // Now using formData
+              value={formData.license}
               onChange={handleChange}
-              className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+              className="peer block w-full rounded-md border py-2 px-5 text-sm outline-2"
               aria-describedby="license-error"
             />
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2" />
           </div>
           <div id="license-error" aria-live="polite" aria-atomic="true">
             {state.errors?.license &&
@@ -66,9 +65,9 @@ export default function EditEbusForm({ebus,}: {ebus: EbusForm}) {
             id="route"
             name="route"
             type="text"
-            value={formData.route} // Now using formData
+            value={formData.route}
             onChange={handleChange}
-            className="peer block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+            className="peer block w-full rounded-md border py-2 text-sm outline-2 px-5"
             aria-describedby="route-error"
           />
           <div id="route-error" aria-live="polite" aria-atomic="true">
@@ -89,10 +88,10 @@ export default function EditEbusForm({ebus,}: {ebus: EbusForm}) {
           <input
             id="total_passengers"
             name="total_passengers"
-            type="number"
+            type="string"
             value={formData.total_passengers} // Now using formData
             onChange={handleChange}
-            className="peer block w-full rounded-md border py-2 text-sm outline-2"
+            className="peer block w-full rounded-md border py-2 text-sm outline-2 px-5"
             aria-describedby="total_passengers-error"
           />
           <div id="total_passengers-error" aria-live="polite" aria-atomic="true">

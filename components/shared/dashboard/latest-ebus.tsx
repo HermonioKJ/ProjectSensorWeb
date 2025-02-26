@@ -1,3 +1,5 @@
+//not use client pa gli kay use client ang 
+
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { fetch5LatestEbus } from '@/lib/actions/dashboard-actions'
 import { roboto } from '../fonts'
@@ -9,15 +11,14 @@ import ViewButton from './ViewButton'
 export default async function LatestEbus() {
   const ebusData = await fetch5LatestEbus()
   return (
-    <Card className="flex w-full flex-col md:col-span-4">
-      <CardHeader>
+    <main>
         <div className='flex flex-row justify-between'>
-        <h2 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
-          Latest Bus Data
+        <h2 className={`${roboto.className} mb-4 text-xl md:text-2xl font-bold`}>
+          List of Modern Jeeps
         </h2>
-        <ViewButton className='flex'>View All</ViewButton>
+        <ViewButton className='flex mb-5'>View All</ViewButton>
         </div>
-      </CardHeader>
+        <Card className="flex w-full flex-col md:col-span-4">
       <CardContent>
         <div>
           <div>
@@ -64,5 +65,6 @@ export default async function LatestEbus() {
         </div>
       </CardContent>
     </Card>
+    </main>
   )
 }

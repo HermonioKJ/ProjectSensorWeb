@@ -1,6 +1,7 @@
 import db from '@/db/drizzle'
 import { ebus } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 //For edit function
 export async function editfetchebus(id : string) {
@@ -57,4 +58,16 @@ export async function fetchebus() {
       }
       throw new Error('Failed to fetch all ebus records.');
     }
+}
+
+
+//delete function
+export async function deleteEbus(id: string) {
+  try {
+    await db.delete(ebus).where(eq(ebus.id, id))
+    revalidatePath('/dashboard/modern-jeeps')
+    return { message: 'Deleted Modern Jeep Entry' }
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete Invoice.' }
+  }
 }

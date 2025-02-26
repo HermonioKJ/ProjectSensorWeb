@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
+import { toast } from 'sonner'
 
 //Calculates the number of max pages
 export async function fetcEbusPages(query: string) {
@@ -159,7 +160,6 @@ export async function createEbus(prevState: State, formData: FormData) {
     
 
     const disc =  0 - (total_passengers || 0);
-
     // Insert the new ebus data into the database
     const result = await db.insert(ebus).values({
       id: latest_id,

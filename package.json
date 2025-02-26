@@ -37,6 +37,7 @@
     "react-dom": "19.0.0-rc-cd22717c-20241013",
     "react-is": "19.0.0-rc.1",
     "recharts": "^2.15.0",
+    "sonner": "^2.0.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.4",

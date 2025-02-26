@@ -1,6 +1,6 @@
 import Breadcrumbs from '@/components/shared/buslist/breadcrumbs'
 import EditEbusForm from '@/components/shared/buslist/edit-form'
-import { editfetchebus, fetchebus } from '@/lib/actions/edit-ebus-actions'
+import { editfetchebus, fetchebus } from '@/lib/actions/edit-add-ebus-actions'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 

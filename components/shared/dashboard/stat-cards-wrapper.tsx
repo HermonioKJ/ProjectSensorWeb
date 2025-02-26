@@ -1,12 +1,8 @@
-'use client'
-
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { fetchCardStat } from '@/lib/actions/dashboard-actions'
-import { BanknoteIcon, ClockIcon, InboxIcon, UsersIcon } from 'lucide-react' // icon
+import { BanknoteIcon, ClockIcon, InboxIcon, UsersIcon } from 'lucide-react'
 import { roboto } from '../fonts'
-import { useEffect, useState } from 'react';
 import './cards.css'
-import { CardsSkeleton } from '../skeletons';
 
 const iconMap = {
   collected: BanknoteIcon,
@@ -15,50 +11,21 @@ const iconMap = {
   invoices: InboxIcon,
 }
 
-export default function StatCardsWrapper() {
-
-  interface StatData {
-    EbusCount: number;
-    TotalDiscrepency: number;
-    TotalPassengers: number;
-    CurrentPassengers: number;
-  }
-
-  const [stats, setStats] = useState<StatData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadStats() {
-      try {
-        const fetchedStats = await fetchCardStat();
-        setStats(fetchedStats); 
-      } catch (error) {
-        console.error('Failed to fetch card stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadStats();
-  }, []); 
-
-  if (loading) {
-    return <CardsSkeleton />; 
-  }
-
-  const { EbusCount, TotalDiscrepency, TotalPassengers, CurrentPassengers } = stats || {};
+export default async function StatCardsWrapper() {
+  // Fetch stats before rendering
+  const stats = await fetchCardStat();
 
   return (
     <div className="grid grid-cols-2 gap-8">
-      <StatCard title="Total No. of Ebuses" value={EbusCount ?? 0} type="collected" />
-      <StatCard title="Total No. of Passengers" value={TotalPassengers ?? 0} type="pending" />
-      <StatCard title="Total Discrepency" value={TotalDiscrepency ?? 0} type="invoices" />
-      <StatCard title="Current Passengers" value={CurrentPassengers ?? 0} type="customers" />
+      <StatCard title="Total No. of Ebuses" value={stats.EbusCount ?? 0} type="collected" />
+      <StatCard title="Total No. of Passengers" value={stats.TotalPassengers ?? 0} type="pending" />
+      <StatCard title="Total Discrepency" value={stats.TotalDiscrepency ?? 0} type="invoices" />
+      <StatCard title="Current Passengers" value={stats.CurrentPassengers ?? 0} type="customers" />
     </div>
   );
 }
 
-export function StatCard({
+function StatCard({
   title,
   value,
   type,
@@ -77,11 +44,11 @@ export function StatCard({
       </CardHeader>
 
       <CardContent className="cards-content">
-        <p className={`${roboto.className} truncate px-7 py-1 text-3xl`}>
+        <p className={`${roboto.className} truncate px-7 py-1 text-3xl font-bold`}>
           {value}
         </p>
         <p className={`${roboto.className} truncate px-7 py-1 text-md`}>
-          {/* You can customize this value to reflect any dynamic text */}
+          {/* Customize this text as needed */}
           42% more than yesterday
         </p>
       </CardContent>

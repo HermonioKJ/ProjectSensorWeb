@@ -3,6 +3,7 @@ import RevenueChartWrapper from '@/components/shared/dashboard/revenue-chart-wra
 import StatCardsWrapper from '@/components/shared/dashboard/stat-cards-wrapper'
 import { roboto } from '@/components/shared/fonts'
 import { CardsSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/components/shared/skeletons'
+import { Card } from '@/components/ui/card'
 import { Suspense } from 'react'
 
 export default async function Page() {
@@ -13,9 +14,11 @@ export default async function Page() {
         <h1 className={`${roboto.className} font-bold text-xl md:text-2xl`}>
           Dashboard
         </h1>
-        {/* <Suspense fallback={<CardsSkeleton />}>
-          <NameCard />
-        </Suspense> */}
+        <Suspense fallback={<CardsSkeleton />}>
+          <Card className='p-5'>
+            <p>Hey there, user!</p>
+            </Card>
+        </Suspense>
         <Suspense fallback={<CardsSkeleton />}>
           <StatCardsWrapper />
         </Suspense>
