@@ -1,17 +1,22 @@
+'use client'
+
 import Link from "next/link";
 import { inter } from "./fonts";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, CircleAlert } from "lucide-react";
 import { Button } from "../ui/button";
+import { useActionState } from "react";
+import { addUser } from "@/lib/actions/user-actions";
 
-export default function RegisterForm(){
+export default function RegisterForm(){ 
+  const [error, formAction, isPending] = useActionState(addUser, undefined)
     return(
-        <form>
-        <div>
-        <h1 className={`${inter.className} text-2xl font-bold`}>
+        <form action={formAction}>
+        <div className="flex flex-col items-start justify-center">
+        <h1 className={`${inter.className} text-2xl font-bold mb-3`}>
           Register
         </h1>
         <Link href="/login" className={`${inter.className} text-sm`}>
-          Already have have an account? 
+          Already have have an account?  
           <span className="underline ml-1">Login</span>
         </Link>
         </div>
@@ -22,7 +27,7 @@ export default function RegisterForm(){
               Email*
         </label>
         <input                 
-                className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                 id="email"
                 type="email"
                 name="email"
@@ -38,7 +43,7 @@ export default function RegisterForm(){
               Password*
         </label>
         <input                 
-                className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                 id="password"
                 type="password"
                 name="password"
@@ -56,7 +61,7 @@ export default function RegisterForm(){
               First name*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                     id="firstname"
                     type="text"
                     name="firstname"
@@ -73,10 +78,10 @@ export default function RegisterForm(){
               Last Name*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
-                    id="lastName"
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
+                    id="lastname"
                     type="text"
-                    name="lastName"
+                    name="lastname"
                     placeholder="e.x. de la Cruz"
                     required
             >
@@ -91,7 +96,7 @@ export default function RegisterForm(){
               Phone Number*
         </label>
         <input                 
-                className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                 id="phoneNo"
                 type="text"
                 name="phoneNo"
@@ -109,7 +114,7 @@ export default function RegisterForm(){
               Region*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                     id="region"
                     type="text"
                     name="region"
@@ -126,7 +131,7 @@ export default function RegisterForm(){
               Province*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                     id="province"
                     type="text"
                     name="province"
@@ -146,7 +151,7 @@ export default function RegisterForm(){
               City*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                     id="city"
                     type="text"
                     name="city"
@@ -163,7 +168,7 @@ export default function RegisterForm(){
               Barangay*
             </label>
             <input                 
-                    className="peer block w-full rounded-md border py-[9px] pl-3 text-sm outline-2  "
+                    className="peer block w-full rounded-md border py-[5px] pl-3 text-sm outline-2  "
                     id="barangay"
                     type="text"
                     name="barangay"
@@ -174,20 +179,20 @@ export default function RegisterForm(){
             </div>
         </div>
 
-        {/* <div
+        <div
           className="flex h-8 items-end space-x-1"
           aria-live="polite"
           aria-atomic="true"
         >
-          {errorMessage && (
+          {error && (
             <>
               <CircleAlert className="h-5 w-5 text-red-500" />
-              <p className="text-sm text-red-500">{errorMessage}</p>
+              <p className="text-sm text-red-500">{error}</p>
             </>
           )}
-        </div> */}
+        </div>
 
-        <div className="mt-4 justify-center items-center">
+        <div className="justify-center items-center">
           <Button type="submit" style={{backgroundColor: '#4caf50'}} className='mt-5'>
             Register <ArrowRightIcon className="ml-auto h-5 w-5" />
           </Button>

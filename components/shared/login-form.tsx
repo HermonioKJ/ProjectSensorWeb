@@ -15,7 +15,7 @@ export default function LoginForm() {
 
   return (
     <form action={formAction}>
-      <div className="flex-1 rounded-lg  px-6 pb-4">
+      <div className="flex-1 rounded-lg px-5">
         <h1 className={`${inter.className} mb-3 text-2xl`}>
           Please log in to continue.
         </h1>
@@ -65,13 +65,12 @@ export default function LoginForm() {
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" aria-disabled={isPending} style={{backgroundColor: '#4caf50'}} className='mt-5'>
+          <Button type="submit" aria-disabled={isPending} style={{backgroundColor: '#4caf50'}} className='mt-2 mb-3'>
             Log in <ArrowRightIcon className="ml-auto h-5 w-5" />
           </Button>
         </div>
-
         <div
-          className="flex h-8 items-end space-x-1"
+          className="flex h-5 items-end space-x-1 mb-3"
           aria-live="polite"
           aria-atomic="true"
         >

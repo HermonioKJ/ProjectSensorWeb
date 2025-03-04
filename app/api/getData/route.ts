@@ -56,7 +56,9 @@ export async function POST(request: Request) {
         .limit(1)
         .execute();
 
-        let newDeviceID = 'D1'; 
+        
+        //modify
+        let newDeviceID = 'D0001'; 
 
         if (latestDevice.length > 0) {
           const lastId = latestDevice[0].id;

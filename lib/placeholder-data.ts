@@ -2,18 +2,41 @@ import { hashSync } from 'bcryptjs';
 
 const users = [
   {
-    id: 'U001',
-    name: 'User One',
+    id: 'U0001',
     email: 'user@nextmail.com',
     password: hashSync('123456', 10),
   },
   {                                                                                                                                                                                                                                                                                                                                        
-    id: 'U002',
-    name: 'User Two',
+    id: 'U0002',
     email: 'user2@nextmail.com',
     password: hashSync('password', 10),
   },
 ];
+
+const usersInfo = [
+  {
+    id: 'U0001',
+    email: 'user@nextmail.com',
+    firstName: 'Juan',
+    lastName: 'de la Cruz',
+    phoneNo: '09936504930',
+    region: 'Region 6',
+    province: 'Iloilo',
+    city: 'Iloilo City',
+    barangay: 'Jaro'
+  },
+  {
+    id: 'U0002',
+    email: 'user2@nextmail.com',
+    firstName: 'Maria',
+    lastName: 'Clara',
+    phoneNo: '09088830610',
+    region: 'Region 6',
+    province: 'Iloilo',
+    city: 'Iloilo City',
+    barangay: 'Jaro'
+  }
+]
 
 // const coopData = [
 //   {
@@ -153,4 +176,4 @@ const revenue = [
   },
 ];
 
-export { revenue, users, ebusData, sensorData, devices };
+export { revenue, users, ebusData, sensorData, devices, usersInfo };

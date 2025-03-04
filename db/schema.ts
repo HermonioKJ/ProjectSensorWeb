@@ -12,8 +12,7 @@ import { sql } from 'drizzle-orm';
 export const users = pgTable(
   'users',
   {
-    id: varchar('id', { length: 50 }).primaryKey().notNull(),
-    name: varchar('name', { length: 255 }).notNull(),
+    id: varchar('id', { length: 10 }).primaryKey().notNull(),
     email: text('email').notNull(),
     password: text('password').notNull(),
   },
@@ -23,6 +22,21 @@ export const users = pgTable(
     };
   }
 );
+
+export const usersInfo = pgTable(
+  'User_info', {
+    id: varchar('id', {length:10}).primaryKey().notNull(),
+    email: varchar('email', {length:50}).notNull().
+    references(() => users.email),
+    firstName: varchar('firstName', {length:50}).notNull(),
+    lastName: varchar('lastName', {length:50}).notNull(),
+    phoneNo: varchar('phoneNo', {length:20}).notNull(),
+    region: varchar('region', {length:15}).notNull(),
+    province: varchar('province', {length:15}).notNull(),
+    city: varchar('city', {length:20}).notNull(),
+    barangay: varchar('barangay', {length:20}).notNull()
+  }
+)
 
 // export const drivers = pgTable('drivers', {
 //   id: varchar('id', { length: 50 }).primaryKey().notNull(),
@@ -35,11 +49,11 @@ export const users = pgTable(
 //   name: varchar('name', { length: 255 }).notNull(),
 // });
 
-export const coops = pgTable('coops', {
-  id: varchar('id', { length: 50 }).primaryKey().notNull(),
-  name: varchar('name', { length: 255 }).notNull(),
-  address: varchar('address', { length: 50 }).notNull(),
-});
+// export const coops = pgTable('coops', {
+//   id: varchar('id', { length: 50 }).primaryKey().notNull(),
+//   name: varchar('name', { length: 255 }).notNull(),
+//   address: varchar('address', { length: 50 }).notNull(),
+// });
 
 export const ebus = pgTable('ebus', {
   id: varchar('id', { length: 10 }).primaryKey().notNull(),

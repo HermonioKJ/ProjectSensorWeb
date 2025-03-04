@@ -1,8 +1,8 @@
 'use server'
 
 import db from '@/db/drizzle'
-import { ebus, sensorData } from '@/db/schema'
-import { count, desc, eq, ilike, sql, or, sum } from 'drizzle-orm'
+import { ebus } from '@/db/schema'
+import { count, desc, eq, ilike, sql, or } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
 import { z } from 'zod'
@@ -143,14 +143,14 @@ export async function createEbus(prevState: State, formData: FormData) {
     let latest_id = "EB00001";
 
     if (latestEntry.length > 0) {
-      const latestId = latestEntry[0].id; // Example: "EB0005"
+      const latestId = latestEntry[0].id;
       
       // Ensure the ID is in the expected format before processing
       if (latestId.startsWith("EB") && latestId.length > 2) {
         const numericPart = parseInt(latestId.substring(3), 10); // Extracts the number part correctly
         if (!isNaN(numericPart)) { // Check if it's a valid number
           const nextId = numericPart + 1; 
-          latest_id = `EB${nextId.toString().padStart(5, "0")}`; 
+          latest_id = `EB${nextId.toString().padStart(4, "0")}`; 
         }
       }
     }

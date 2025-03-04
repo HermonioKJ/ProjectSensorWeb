@@ -7,10 +7,10 @@ export default function LoginPage() {
     <div className="flex justify-center items-center min-h-screen w-full ">
       <main className="w-full max-w-md mx-auto">
         <Card>
-          <CardHeader className="pt-10 space-y-4 flex justify-center items-center">
+          <CardHeader className="py-5 pt-10 space-y-4 flex justify-center items-center">
             <AppLogo />
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="pb-5">
             <LoginForm />
           </CardContent>
         </Card>
