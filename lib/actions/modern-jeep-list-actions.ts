@@ -221,7 +221,7 @@ export async function updateEbus(
   } catch (error) {
     return { message: 'Database Error: Failed to Update Ebus.' }
   }
-
+  revalidatePath('/dashboard')
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
 }
@@ -230,6 +230,7 @@ export async function updateEbus(
 export async function deleteEbus(id: string) {
   try {
     await db.delete(ebus).where(eq(ebus.id, id))
+    revalidatePath('/dashboard')
     revalidatePath('/dashboard/modern-jeeps')
     return { message: 'Deleted Modern Jeep Entry' }
   } catch (error) {
