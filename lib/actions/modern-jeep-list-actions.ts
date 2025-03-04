@@ -7,7 +7,6 @@ import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
-import { toast } from 'sonner'
 
 //Calculates the number of max pages
 export async function fetcEbusPages(query: string) {
@@ -19,8 +18,8 @@ export async function fetcEbusPages(query: string) {
       .from(ebus)
       .where(
         or(
-          ilike(ebus.route, sql`${`%${query}%`}`), // Apply filtering to route column
-          ilike(ebus.status, sql`${`%${query}%`}`) // Apply filtering to status column
+          ilike(ebus.route, sql`${`%${query}%`}`), 
+          ilike(ebus.status, sql`${`%${query}%`}`)
         )
       );
 
@@ -156,9 +155,6 @@ export async function createEbus(prevState: State, formData: FormData) {
       }
     }
     
-    console.log(latest_id); // Should return "EB0002", "EB0006", etc.
-    
-
     const disc =  0 - (total_passengers || 0);
     // Insert the new ebus data into the database
     const result = await db.insert(ebus).values({
@@ -176,8 +172,8 @@ export async function createEbus(prevState: State, formData: FormData) {
     }
   }
 
-  // Revalidate the cache for the modern jeeps page and redirect the user
   revalidatePath('/dashboard/modern-jeeps')
+  revalidatePath('/dashboard')
   redirect('/dashboard/modern-jeeps')
 }
 

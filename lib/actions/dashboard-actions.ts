@@ -49,8 +49,6 @@ export async function fetch5LatestEbus() {
       .orderBy(desc(ebus.dateRegistered)) 
     .limit(5)
 
-      console.log('Fetched Ebus Data:', data);
-
       // Ensure data is an array and not empty
       if (!Array.isArray(data) || data.length === 0) {
         console.warn('No data found for the latest ebuses.');

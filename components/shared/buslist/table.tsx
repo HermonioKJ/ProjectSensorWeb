@@ -64,6 +64,7 @@ export default async function EbusTable({
                 </div>
               ))}
             </div>
+            
             {/* Desktop View */}
             <table className="hidden min-w-full   md:table">
               <thead className="rounded-lg text-left text-sm font-normal">

@@ -7,14 +7,14 @@ import './cards.css'
 const iconMap = {
   collected: BanknoteIcon,
   customers: UsersIcon,
-  pending: ClockIcon,
+  pending: ClockIcon, 
   invoices: InboxIcon,
 }
 
 export default async function StatCardsWrapper() {
   // Fetch stats before rendering
   const stats = await fetchCardStat();
-
+  
   return (
     <div className="grid grid-cols-2 gap-8">
       <StatCard title="Total No. of Ebuses" value={stats.EbusCount ?? 0} type="collected" />
