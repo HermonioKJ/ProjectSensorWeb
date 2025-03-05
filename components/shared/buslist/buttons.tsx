@@ -1,10 +1,10 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { deleteEbus } from '@/lib/actions/modern-jeep-list-actions'
-import { PencilIcon, TrashIcon } from 'lucide-react'
+import { deleteEbus } from '@/lib/actions/edit-add-ebus-actions'
+import { PencilIcon } from 'lucide-react'
 import Link from 'next/link'
-import {toast, Toaster} from 'sonner'
+import {toast} from 'sonner'
 
 export function UpdateEbus({ id }: { id: string }) {
   return (

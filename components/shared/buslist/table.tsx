@@ -5,6 +5,7 @@ import { Dialog, DialogClose, DialogDescription, DialogTitle, DialogTrigger } fr
 import { DialogContent, DialogHeader } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { TrashIcon } from 'lucide-react'
+import PreviewBusForm from './preview-form'
 
 export default async function EbusTable({
   query,
@@ -100,7 +101,24 @@ export default async function EbusTable({
                   >
                     <td className="whitespace-nowrap py-3 pl-6 pr-3">
                       <div className="flex items-center gap-3">
-                        <p>{ebus.id}</p>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                          <button>
+                          <p className='underline'>{ebus.id}</p>
+                          </button>
+                          </DialogTrigger>
+
+                          <DialogContent className='sm-w-md max-w-fit'>
+                            <DialogHeader>
+                              <DialogTitle className='font-bold'>
+                                Preview Bus No. {ebus.id}
+                              </DialogTitle>
+                            </DialogHeader>
+                            <DialogDescription>
+                              <PreviewBusForm></PreviewBusForm>
+                            </DialogDescription>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </td>
                     <td className="whitespace-nowrap py-3 pl-6 pr-3"> 

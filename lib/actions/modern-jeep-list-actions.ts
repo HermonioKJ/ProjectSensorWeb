@@ -140,7 +140,7 @@ export async function createEbus(prevState: State, formData: FormData) {
     .orderBy(desc(ebus.id))
     .limit(1);
 
-    let latest_id = "EB00001";
+    let latest_id = "EB0001";
 
     if (latestEntry.length > 0) {
       const latestId = latestEntry[0].id;
@@ -224,16 +224,4 @@ export async function updateEbus(
   revalidatePath('/dashboard')
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
-}
-
-//Delete button function
-export async function deleteEbus(id: string) {
-  try {
-    await db.delete(ebus).where(eq(ebus.id, id))
-    revalidatePath('/dashboard')
-    revalidatePath('/dashboard/modern-jeeps')
-    return { message: 'Deleted Modern Jeep Entry' }
-  } catch (error) {
-    return { message: 'Database Error: Failed to Delete Modern Jeep Entry.' }
-  }
 }

@@ -77,7 +77,7 @@ const usersInfo = [
 
 const ebusData = [
   {
-    id: 'EB00001',
+    id: 'EB0001',
     license: 'AB123CD',
     route: 'Route A',
     status: 'active',
@@ -90,7 +90,7 @@ const ebusData = [
     dateRegistered: new Date(),
   },
   {
-    id: 'EB00002',
+    id: 'EB0002',
     license: 'XY987ZT',
     route: 'Route B',
     status: 'inactive',
@@ -103,7 +103,7 @@ const ebusData = [
     dateRegistered: new Date(),
   },
   {
-    id: 'EB00003',
+    id: 'EB0003',
     license: 'AB123CE',
     route: 'Route C',
     status: 'active',

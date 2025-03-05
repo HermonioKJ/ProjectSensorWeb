@@ -7,7 +7,7 @@ import { CheckIcon, ClockIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useActionState } from 'react'
 
-export default function EditEbusForm({ebus,}: {ebus: EbusForm}) {
+export default function EditEbusForm({ebus}: {ebus: EbusForm}) {
   const initialState: State = { message: null, errors: {} }
   const updateEbusWithId = updateEbus.bind(null, ebus.id)
   const [state, formAction] = useActionState(updateEbusWithId, initialState)
