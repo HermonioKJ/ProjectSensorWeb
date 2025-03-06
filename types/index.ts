@@ -26,3 +26,12 @@ export type FormattedCustomersTable = {
     status: string
     dateRegistered: Date
   }
+
+  export type SensorData = {
+    id: string;
+    status: string;
+    latitude: number;
+    longitude: number;
+    passenger_count: number;
+    speed: number;
+  } | {}; 

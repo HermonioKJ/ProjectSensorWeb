@@ -114,9 +114,7 @@ export default async function EbusTable({
                                 Preview Bus No. {ebus.id}
                               </DialogTitle>
                             </DialogHeader>
-                            <DialogDescription>
-                              <PreviewBusForm></PreviewBusForm>
-                            </DialogDescription>
+                              <PreviewBusForm id={ebus.id}></PreviewBusForm>
                           </DialogContent>
                         </Dialog>
                       </div>

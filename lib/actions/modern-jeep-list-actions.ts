@@ -1,8 +1,8 @@
 'use server'
 
 import db from '@/db/drizzle'
-import { ebus } from '@/db/schema'
-import { count, desc, eq, ilike, sql, or } from 'drizzle-orm'
+import { devices, ebus, sensorData } from '@/db/schema'
+import { count, desc, eq, ilike, sql, or, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
 import { z } from 'zod'
@@ -225,3 +225,47 @@ export async function updateEbus(
   revalidatePath('/dashboard/modern-jeeps')
   redirect('/dashboard/modern-jeeps')
 }
+
+
+//device data fetch based on passed on ebus_ID (must be linked)
+export async function fetchSensorData(ebus_id:string){
+  try {
+    let deviceIDs = await db
+      .select({ id: devices.id })
+      .from(devices)
+      .where(eq(devices.ebus_id, ebus_id))
+      .limit(1)
+    
+    if(deviceIDs.length === 0){
+      deviceIDs = []
+    }
+
+    const IDList = deviceIDs.map(device => device.id);
+
+    console.log("Device IDs:", IDList);
+  
+    const Data = await db
+      .select({
+        id: sensorData.id,
+        status: sensorData.status,
+        latitude: sensorData.latitude,
+        longitude: sensorData.longitude,
+        passenger_count: sensorData.passenger_count,
+        speed: sensorData.speed,
+      })
+      .from(sensorData)
+      .where(inArray(sensorData.device_id, IDList))
+      .limit(1);
+
+    return Data;
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error("Database Error:", err.message);
+      console.error("Stack Trace:", err.stack);
+    } else {
+      console.error("Unknown Error:", err);
+    }
+    throw new Error("Failed to fetch all sensor data.");
+  }  
+  }
+
