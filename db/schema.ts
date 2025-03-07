@@ -67,7 +67,7 @@ export const ebus = pgTable('ebus', {
 });
 
 export const devices = pgTable('devices', {
-  id: varchar('id', { length: 10 }).primaryKey().notNull(), //auto generated na lng
+  id: varchar('id', { length: 10 }).primaryKey().notNull(),
   ebus_id: varchar('ebus_id', { length: 10 })
     .references(() => ebus.id, { onDelete: 'cascade' }), 
   registered_at: timestamp('registered_at')
@@ -76,7 +76,7 @@ export const devices = pgTable('devices', {
 });
 
 export const sensorData = pgTable('sensorData', {
-  id: varchar('id', { length: 10 }).primaryKey().notNull(), //auto generated
+  id: varchar('id', { length: 10 }).primaryKey().notNull(),
   device_id: varchar('device_id', { length: 10 }) 
     .references(() => devices.id, { onDelete: 'cascade' }),
   latitude: doublePrecision('latitude').notNull(),
@@ -86,6 +86,16 @@ export const sensorData = pgTable('sensorData', {
   status: varchar('status', { length: 100 }).notNull(),
   timestamp: timestamp('timestamp').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
+
+export const bluetoothData = pgTable('bluetoothData',{
+  id: varchar('id', {length:10}).primaryKey().notNull(),
+  BL_entrance: integer('BL_entrance').notNull(),
+  BL_exit: integer('BL_exit').notNull(),
+  BL_status: varchar('BL_status', {length:10}).notNull(),
+  device_id: varchar('device_id', {length:10}).notNull()
+  .references(() => devices.id, {onDelete: "cascade"}),
+  timestamp: timestamp('timestamp').default(sql`CURRENT_TIMESTAMP`).notNull(),
+})
 
 export const revenue = pgTable('revenue', {
   month: varchar('Month').notNull(),

@@ -2,6 +2,7 @@ import { sensorData, devices, ebus } from '@/db/schema';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { eq, desc } from 'drizzle-orm';
+import { generateDeviceID, generateSensorID } from '@/lib/actions/modern-jeep-list-actions';
 
 const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
 const db = drizzle(pool);
@@ -33,39 +34,10 @@ export async function POST(request: Request) {
         const { longitude, latitude, speed, passenger, status } = main;
 
         // Generate new sensorID
-        const latestSensor = await db
-        .select({ id: sensorData.id })
-        .from(sensorData)
-        .orderBy(desc(sensorData.id)) 
-        .limit(1)
-        .execute();
-
-        let newSensorId = 'S1'; 
-
-        if (latestSensor.length > 0) {
-          const lastId = latestSensor[0].id;
-          const lastNum = parseInt(lastId.replace('S', ''), 10); 
-          newSensorId = `S${lastNum + 1}`; 
-        }
+        const latestSensorID = await generateSensorID()
 
         // Generate new deviceID
-        const latestDevice = await db
-        .select({ id: devices.id })
-        .from(devices)
-        .orderBy(desc(devices.id)) 
-        .limit(1)
-        .execute();
-
-        
-        //modify
-        let newDeviceID = 'D0001'; 
-
-        if (latestDevice.length > 0) {
-          const lastId = latestDevice[0].id;
-          const lastNum = parseInt(lastId.replace('D', ''), 10); 
-          newDeviceID = `D${lastNum + 1}`; 
-        }
-        
+        const latestDeviceID = await generateDeviceID()        
 
         if (
           latitude === undefined ||
@@ -98,18 +70,18 @@ export async function POST(request: Request) {
         const existingDevice = await tx.select().from(devices).where(eq(devices.ebus_id, formattedData.ebus_id)).limit(1).execute();
         if (existingDevice.length === 0) {
           await tx.insert(devices).values({
-            id: newDeviceID,
+            id: latestDeviceID,
             ebus_id: formattedData.ebus_id,
             registered_at: ts,
           });
           await tx.insert(sensorData).values({
-            id: newSensorId,
+            id: latestSensorID,
             latitude: formattedData.latitude,
             longitude: formattedData.longitude,
             passenger_count: formattedData.passenger_count,
             speed: formattedData.speed,
             status: formattedData.status,
-            device_id:newDeviceID,
+            device_id:latestDeviceID,
             timestamp: ts,
           });
           console.log("New device inserted:", formattedData.ebus_id);

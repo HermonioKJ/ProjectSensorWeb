@@ -133,7 +133,7 @@
   const sensorData = [
     {
       id: 'S0001',
-      device_id: 'D0002',
+      device_id: 'D0001',
       latitude: 34.0522,
       longitude: -118.2437,
       speed: 55,
@@ -149,6 +149,25 @@
       speed: 60,
       passenger_count: 10,
       status: 'offline',
+      timestamp: new Date(),
+    },
+  ];
+
+  const bluetoothData = [
+    {
+      id: 'BL0001',
+      device_id: 'D0001',
+      BL_entrance:10,
+      BL_exit:10,
+      BL_status:'active',
+      timestamp: new Date(),
+    },
+    {
+      id: 'S0002',
+      device_id: 'D0002',
+      BL_entrance:10,
+      BL_exit:10,
+      BL_status:'active',
       timestamp: new Date(),
     },
   ];
@@ -176,4 +195,4 @@
     },
   ];
 
-  export { revenue, users, ebusData, sensorData, devices, usersInfo };
+  export { revenue, users, ebusData, sensorData, devices, usersInfo, bluetoothData };

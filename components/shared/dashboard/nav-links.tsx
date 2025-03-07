@@ -1,6 +1,7 @@
 'use client'
+
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation' // Import useRouter
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Tv, HomeIcon, ChartArea, BusFront, Settings } from 'lucide-react'
@@ -13,14 +14,15 @@ const links = [
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
-
 export default function NavLinks() {
   const pathname = usePathname()
-  
+  const router = useRouter() // Initialize router
+
   return (
     <div className="flex flex-col py-5 space-y-5">
       {links.map((link) => {
         const LinkIcon = link.icon
+
         return (
           <Link
             key={link.name}
@@ -28,10 +30,13 @@ export default function NavLinks() {
             className={cn(
               buttonVariants({ variant: 'ghost' }),
               'flex items-center justify-start space-x-2',
-              pathname === link.href
-                ? 'text-primary-600' // Active link color
-                : 'text-muted-foreground'
+              pathname === link.href ? 'text-primary-600' : 'text-muted-foreground'
             )}
+            onClick={() => {
+              if (pathname === link.href) {
+                router.refresh() // Refresh the page if already on the same route
+              }
+            }}
           >
             <LinkIcon className="h-6 w-6" />
             <span className="hidden md:block">{link.name}</span>

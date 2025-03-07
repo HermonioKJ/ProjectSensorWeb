@@ -269,3 +269,46 @@ export async function fetchSensorData(ebus_id:string){
   }  
   }
 
+  export async function generateDeviceID(){
+    const latestUser = await db
+    .select({ id: devices.id })
+    .from(devices)
+    .orderBy(desc(devices.id)) 
+    .limit(1)
+    .execute();
+
+    let ID = 'D0001'; 
+
+    if (latestUser.length > 0) {
+        ID = latestUser[0].id
+        if (ID.startsWith("U")){
+            const IDno = parseInt(ID.substring(1), 10)
+            const newIDno = IDno + 1
+            ID = `U${newIDno.toString().padStart(4, "0")}`;
+        }
+    }
+
+    return ID
+}
+
+export async function generateSensorID(){
+  const latestUser = await db
+  .select({ id: sensorData.id })
+  .from(sensorData)
+  .orderBy(desc(sensorData.id)) 
+  .limit(1)
+  .execute();
+
+  let ID = 'S0001'; 
+
+  if (latestUser.length > 0) {
+      ID = latestUser[0].id
+      if (ID.startsWith("U")){
+          const IDno = parseInt(ID.substring(1), 10)
+          const newIDno = IDno + 1
+          ID = `U${newIDno.toString().padStart(4, "0")}`;
+      }
+  }
+
+  return ID
+}

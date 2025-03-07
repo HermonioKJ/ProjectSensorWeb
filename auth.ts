@@ -19,7 +19,8 @@ export const { auth, signIn, signOut } = NextAuth({
         const user = await getUser(email)
         if (!user) return null
         const passwordsMatch = await compare(password, user.password)
-        if (passwordsMatch) return user
+        if (passwordsMatch)
+          return user
       }
         console.log('Invalid credentials')
         return null
