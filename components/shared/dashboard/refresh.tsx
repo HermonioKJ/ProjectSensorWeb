@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function RefreshButton() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function Refresh() {
     setLoading(true);
@@ -14,6 +16,7 @@ export default function RefreshButton() {
       console.error('Error refreshing data:', error);
     } finally {
       setLoading(false);
+      router.refresh();
     }
   }
 

@@ -9,6 +9,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import EbusTable from '@/components/shared/buslist/table'
+import RefreshButton from '@/components/shared/dashboard/refresh'
 
 export const metadata: Metadata = {
   title: 'Modern Jeeps',
@@ -37,6 +38,7 @@ export default async function Page({
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search License/Route/Active Status..." />
+        <RefreshButton></RefreshButton>
         <Button asChild>
           <Link href="/dashboard/modern-jeeps/create">
             <span className="hidden md:block">Add Modern Jeeps</span>
