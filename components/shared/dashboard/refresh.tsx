@@ -16,7 +16,7 @@ export default function RefreshButton() {
       console.error('Error refreshing data:', error);
     } finally {
       setLoading(false);
-      router.refresh();
+      window.location.reload();
     }
   }
 
