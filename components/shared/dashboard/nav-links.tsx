@@ -34,7 +34,7 @@ export default function NavLinks() {
             )}
             onClick={() => {
               if (pathname === link.href) {
-                router.refresh() // Refresh the page if already on the same route
+                router.refresh()
               }
             }}
           >
