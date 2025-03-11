@@ -153,7 +153,7 @@
     },
   ];
 
-  const bluetoothData = [
+  const BLData = [
     {
       id: 'BL0001',
       device_id: 'D0001',
@@ -163,7 +163,7 @@
       timestamp: new Date(),
     },
     {
-      id: 'S0002',
+      id: 'BL0002',
       device_id: 'D0002',
       BL_entrance:10,
       BL_exit:10,
@@ -195,4 +195,4 @@
     },
   ];
 
-  export { revenue, users, ebusData, sensorData, devices, usersInfo, bluetoothData };
+  export { revenue, users, ebusData, sensorData, devices, usersInfo, BLData };

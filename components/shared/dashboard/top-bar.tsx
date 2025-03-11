@@ -2,6 +2,7 @@ import AppLogo from "../app-logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftToLine } from "lucide-react";
 import { signOut } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default function TopBar() {
     return(
@@ -11,6 +12,7 @@ export default function TopBar() {
             action={async () => {
               'use server'
               await signOut()
+              redirect("/login")
             }}
           >
             <Button

@@ -38,23 +38,6 @@ export const usersInfo = pgTable(
   }
 )
 
-// export const drivers = pgTable('drivers', {
-//   id: varchar('id', { length: 50 }).primaryKey().notNull(),
-//   name: varchar('name', { length: 255 }).notNull(),
-//   license_number: varchar('license_number', { length: 255 }).notNull(),
-// });
-
-// export const conductors = pgTable('conductors', {
-//   id: varchar('id', { length: 50 }).primaryKey().notNull(),
-//   name: varchar('name', { length: 255 }).notNull(),
-// });
-
-// export const coops = pgTable('coops', {
-//   id: varchar('id', { length: 50 }).primaryKey().notNull(),
-//   name: varchar('name', { length: 255 }).notNull(),
-//   address: varchar('address', { length: 50 }).notNull(),
-// });
-
 export const ebus = pgTable('ebus', {
   id: varchar('id', { length: 10 }).primaryKey().notNull(),
   route: varchar('route', { length: 255 }).notNull(),
@@ -87,7 +70,7 @@ export const sensorData = pgTable('sensorData', {
   timestamp: timestamp('timestamp').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
-export const bluetoothData = pgTable('bluetoothData',{
+export const BLData = pgTable('BLData',{
   id: varchar('id', {length:10}).primaryKey().notNull(),
   BL_entrance: integer('BL_entrance').notNull(),
   BL_exit: integer('BL_exit').notNull(),
@@ -95,7 +78,7 @@ export const bluetoothData = pgTable('bluetoothData',{
   device_id: varchar('device_id', {length:10}).notNull()
   .references(() => devices.id, {onDelete: "cascade"}),
   timestamp: timestamp('timestamp').default(sql`CURRENT_TIMESTAMP`).notNull(),
-})
+});
 
 export const revenue = pgTable('revenue', {
   month: varchar('Month').notNull(),

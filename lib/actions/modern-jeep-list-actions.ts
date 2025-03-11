@@ -1,7 +1,7 @@
 'use server'
 
 import db from '@/db/drizzle'
-import { devices, ebus, sensorData } from '@/db/schema'
+import { BLData, devices, ebus, sensorData } from '@/db/schema'
 import { count, desc, eq, ilike, sql, or, inArray } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { ITEMS_PER_PAGE } from '../constant'
@@ -214,8 +214,7 @@ export async function updateEbus(
         route,
         total_passengers: totalPassengers,
         status,
-        discrepancy: discrepancy,
-        current_passengers: 0
+        discrepancy: discrepancy
       })
       .where(eq(ebus.id, id))
   } catch (error) {
@@ -268,47 +267,81 @@ export async function fetchSensorData(ebus_id:string){
     throw new Error("Failed to fetch all sensor data.");
   }  
   }
-
-  export async function generateDeviceID(){
+  
+  
+  export async function generateDeviceID() {
     const latestUser = await db
-    .select({ id: devices.id })
-    .from(devices)
-    .orderBy(desc(devices.id)) 
-    .limit(1)
-    .execute();
-
-    let ID = 'D0001'; 
-
+      .select({ id: devices.id })
+      .from(devices)
+      .orderBy(desc(devices.id)) 
+      .limit(1)
+      .execute();
+  
+    let Device_ID = 'D0001'; 
+  
     if (latestUser.length > 0) {
-        ID = latestUser[0].id
-        if (ID.startsWith("U")){
-            const IDno = parseInt(ID.substring(1), 10)
-            const newIDno = IDno + 1
-            ID = `U${newIDno.toString().padStart(4, "0")}`;
+      const lastId = latestUser[0].id;
+  
+      if (lastId.startsWith("D")) {
+        const IDno = parseInt(lastId.substring(1), 10); 
+  
+        if (!Number.isNaN(IDno)) { 
+          const newIDno = IDno + 1;
+          Device_ID = `D${newIDno.toString().padStart(4, "0")}`; 
         }
-    }
-
-    return ID
-}
-
-export async function generateSensorID(){
-  const latestUser = await db
-  .select({ id: sensorData.id })
-  .from(sensorData)
-  .orderBy(desc(sensorData.id)) 
-  .limit(1)
-  .execute();
-
-  let ID = 'S0001'; 
-
-  if (latestUser.length > 0) {
-      ID = latestUser[0].id
-      if (ID.startsWith("U")){
-          const IDno = parseInt(ID.substring(1), 10)
-          const newIDno = IDno + 1
-          ID = `U${newIDno.toString().padStart(4, "0")}`;
       }
+    }
+    return Device_ID;
   }
-
-  return ID
-}
+  
+  export async function generateSensorID() {
+    
+    const latestUser = await db
+      .select({ id: sensorData.id })
+      .from(sensorData)
+      .orderBy(desc(sensorData.id)) 
+      .limit(1)
+      .execute();
+  
+    let Sensor_ID = 'S0001'; 
+  
+    if (latestUser.length > 0) {
+      const lastId = latestUser[0].id;
+  
+      if (lastId.startsWith("S")) {
+        const IDno = parseInt(lastId.substring(1), 10);
+  
+        if (!Number.isNaN(IDno)) {
+          const newIDno = IDno + 1;
+          Sensor_ID = `S${newIDno.toString().padStart(4, "0")}`;
+        }
+      }
+    }
+    return Sensor_ID;
+  }
+  
+  export async function generateBLID() {
+    const latestUser = await db
+      .select({ id: BLData.id })
+      .from(BLData)
+      .orderBy(desc(BLData.id)) 
+      .limit(1)
+      .execute();
+  
+    let BL_ID = 'BL0001'; 
+  
+    if (latestUser.length > 0) {
+      const lastId = latestUser[0].id;
+  
+      if (lastId.startsWith("BL")) {
+        const IDno = parseInt(lastId.substring(2), 10); 
+  
+        if (!Number.isNaN(IDno)) { 
+          const newIDno = IDno + 1;
+          BL_ID = `BL${newIDno.toString().padStart(4, "0")}`; 
+        }
+      }
+    }
+    return BL_ID;
+  }
+  

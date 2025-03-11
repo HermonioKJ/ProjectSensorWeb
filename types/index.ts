@@ -35,3 +35,11 @@ export type FormattedCustomersTable = {
     passenger_count: number;
     speed: number;
   } | {}; 
+
+  export type bluetoothData = {
+    id: string;
+    BL_status: string;
+    BL_entrance: number;
+    BL_exit: number;
+    device_id: string;
+  } | {}; 

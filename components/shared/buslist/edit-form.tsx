@@ -12,7 +12,6 @@ export default function EditEbusForm({ebus}: {ebus: EbusForm}) {
   const updateEbusWithId = updateEbus.bind(null, ebus.id)
   const [state, formAction] = useActionState(updateEbusWithId, initialState)
 
-  // Local state for form fields, ensuring it updates when `ebus` changes
   const [formData, setFormData] = useState<EbusForm>(ebus)
 
   useEffect(() => {
