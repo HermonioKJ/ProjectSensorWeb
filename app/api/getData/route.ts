@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 import { eq } from 'drizzle-orm';
 import { generateBLID, generateDeviceID, generateSensorID} from '@/lib/actions/modern-jeep-list-actions';
 import { revalidatePath } from 'next/cache';
+import { NextRequest, NextResponse } from 'next/server';
 
 const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
 const db = drizzle(pool);
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
             device_id: formattedData.latestDeviceID,
             timestamp: ts,
           });
-          revalidatePath("/dashboard")
+          revalidatePath('/dashboard')
           console.log("New device inserted:", formattedData.ebus_id);
         }
 
@@ -158,7 +159,7 @@ export async function POST(request: Request) {
 
         // Update ebus passenger count
         await tx.update(ebus).set({ current_passengers: actual_count }).where(eq(ebus.id, formattedData.ebus_id));
-        revalidatePath("/dashboard")
+        revalidatePath('/dashboard')
       }
     });
 
@@ -175,5 +176,22 @@ export async function POST(request: Request) {
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
+  }
+}
+
+//refresh data
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const path = searchParams.get('path');
+    if (!path) {
+      return NextResponse.json({ error: 'Path is required' }, { status: 400 });
+    }
+
+    revalidatePath(path);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error revalidating:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

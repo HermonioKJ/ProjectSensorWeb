@@ -12,7 +12,6 @@ const iconMap = {
 }
 
 export default async function StatCardsWrapper() {
-  // Fetch stats before rendering
   const stats = await fetchCardStat();
   
   return (

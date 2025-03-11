@@ -35,7 +35,6 @@ export async function fetcEbusPages(query: string) {
 //Ebus based on search filter and page
 export async function fetchFilteredEbus(query: string, currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE
-
   try {
     const data = await db
       .select({
@@ -43,27 +42,17 @@ export async function fetchFilteredEbus(query: string, currentPage: number) {
         license: ebus.license,
         route: ebus.route,
         IsActive: ebus.status,
-        // coop_name: coops.name,  
-        // driver_name: drivers.name, 
-        // conductor_name: conductors.name, 
         TotalPass: ebus.total_passengers,
         CurrentPass: ebus.current_passengers,
         Disc: ebus.discrepancy,
         timeRegistered: ebus.dateRegistered
       })
       .from(ebus)
-      // .leftJoin(sensorData, eq(sensorData.ebus_id, ebus.id))
-      // .leftJoin(coops, eq(coops.id, ebus.coop_id)) 
-      // .leftJoin(drivers, eq(drivers.id, ebus.driver_id)) 
-      // .leftJoin(conductors, eq(conductors.id, ebus.conductor_id)) 
       .where(
         or(
           ilike(ebus.license, sql`${`%${query}%`}`),
           ilike(ebus.route, sql`${`%${query}%`}`),
           ilike(ebus.status, sql`${`%${query}%`}`),
-          // ilike(coops.name, sql`${`%${query}%`}`), // Search by coop name
-          // ilike(drivers.name, sql`${`%${query}%`}`), // Search by driver name
-          // ilike(conductors.name, sql`${`%${query}%`}`) // Search by conductor name
         )
       )
       .orderBy(desc(sql`CAST(SUBSTRING(${ebus.id}, 3) AS INTEGER)`))
@@ -76,7 +65,6 @@ export async function fetchFilteredEbus(query: string, currentPage: number) {
     throw new Error('Failed to fetch filtered ebus data.')
   }
 }
-
 
 //Form for creating/updating ebus entry
 const FormSchema = z.object({
@@ -156,6 +144,8 @@ export async function createEbus(prevState: State, formData: FormData) {
     }
     
     const disc =  0 - (total_passengers || 0);
+
+
     // Insert the new ebus data into the database
     const result = await db.insert(ebus).values({
       id: latest_id,
@@ -294,6 +284,7 @@ export async function fetchSensorData(ebus_id:string){
     return Device_ID;
   }
   
+
   export async function generateSensorID() {
     
     const latestUser = await db

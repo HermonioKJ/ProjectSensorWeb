@@ -1,10 +1,11 @@
 import LatestEbus from '@/components/shared/dashboard/latest-ebus'
+import RefreshButton from '@/components/shared/dashboard/refresh'
 import RevenueChartWrapper from '@/components/shared/dashboard/revenue-chart-wrapper'
 import StatCardsWrapper from '@/components/shared/dashboard/stat-cards-wrapper'
 import { roboto } from '@/components/shared/fonts'
 import { CardsSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/components/shared/skeletons'
 import { Card } from '@/components/ui/card'
-import { Suspense } from 'react'
+import { Suspense} from 'react'
 
 export default async function Page() {
   return (
@@ -16,8 +17,11 @@ export default async function Page() {
         </h1>
         <Suspense fallback={<CardsSkeleton />}>
           <Card className='p-5'>
-            <p>Hey there, user!</p>
-            </Card>
+            <div className='flex flex-row justify-between'>
+            <p className='pt-1'>Hey there, user!</p>
+            <RefreshButton></RefreshButton>
+            </div>
+          </Card>
         </Suspense>
         <Suspense fallback={<CardsSkeleton />}>
           <StatCardsWrapper />
