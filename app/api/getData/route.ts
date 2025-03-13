@@ -9,6 +9,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
 const db = drizzle(pool);
 
+
+//server side
 export async function POST(request: Request) {
   try {
 

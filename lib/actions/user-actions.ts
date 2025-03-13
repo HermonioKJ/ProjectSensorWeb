@@ -1,6 +1,6 @@
 'use server'
 
-import { signIn } from "@/auth"
+import { signIn, signOut } from "@/auth"
 import db from "@/db/drizzle"
 import { users, usersInfo } from "@/db/schema"
 import { hashSync } from "bcryptjs"
@@ -109,3 +109,8 @@ export async function addUser(
 revalidatePath('/dashboard')
 redirect('/login')
 }
+
+export async function logoutAction() {
+    await signOut();
+    redirect("/login");
+  }

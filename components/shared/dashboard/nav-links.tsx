@@ -26,9 +26,10 @@ export default function NavLinks() {
   }
 
   return (
-    <div className="flex flex-col py-5 space-y-5">
+    <div className="flex flex-col pt-5 space-y-5 w-full h-[100%]">
       {links.map((link) => {
         const LinkIcon = link.icon;
+        const isActive = pathname === link.href;
 
         return (
           <Link
@@ -36,11 +37,13 @@ export default function NavLinks() {
             href={link.href}
             className={cn(
               buttonVariants({ variant: 'ghost' }),
-              'flex items-center justify-start space-x-2',
-              pathname === link.href ? 'text-primary-600' : 'text-muted-foreground'
+              'flex items-center justify-start space-x-3 px-5 relative w-full rounded-none',
+              isActive
+                ? 'text-primary-600 font-bold border-r-[6px] border-primary bg-gray-50'
+                : 'text-muted-foreground'
             )}
             onClick={async () => {
-              if (pathname === link.href) {
+              if (isActive) {
                 await handleRevalidate(link.href);
               }
             }}

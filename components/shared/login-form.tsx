@@ -16,15 +16,22 @@ export default function LoginForm() {
     undefined
   )
 
-  // Redirect if login is successful (no error message)
   useEffect(() => {
     if (!errorMessage && !isPending) {
-      router.replace('/dashboard') // Redirect to dashboard
-    }
+      router.replace('/dashboard')
+    } 
   }, [errorMessage, isPending, router])
 
   return (
+    
     <form action={formAction}>
+      {isPending && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-5 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold">Logging in...</p>
+          </div>
+        </div>
+      )}
       <div className="flex-1 rounded-lg px-5">
         <h1 className={`${inter.className} mb-3 text-2xl`}>
           Please log in to continue.
