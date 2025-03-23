@@ -97,8 +97,6 @@ export async function POST(request: Request) {
           console.log("New device inserted:", formattedData.ebus_id);
         }
 
-
-
         // Update the sensordata
         const ts = new Date();
         const actual_count = passenger - (BL_entrance + BL_exit)
