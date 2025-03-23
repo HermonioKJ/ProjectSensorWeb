@@ -15,6 +15,7 @@ export default function LoginForm() {
     authenticate,
     undefined
   )
+  console.log(errorMessage)
 
   useEffect(() => {
     if (!errorMessage && !isPending) {

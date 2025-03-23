@@ -13,18 +13,9 @@ const db = drizzle(pool);
 //server side
 export async function POST(request: Request) {
   try {
-
-    // Generate new sensorID
-    const latestSensorID = await generateSensorID()
-
-    // Generate new deviceID
-    const latestDeviceID = await generateDeviceID()    
-
-    // Generate new deviceID
-    const latestBLID = await generateBLID()
-
     const body = await request.json(); 
 
+    //checks if device body is empty
     if (!body.Devices || !Array.isArray(body.Devices)) {
       return new Response(
         JSON.stringify({ success: false, message: 'Invalid or missing Devices array' }),
@@ -32,43 +23,18 @@ export async function POST(request: Request) {
       );
     } 
 
-    //Generate new Data timestamp
-    const ts = new Date();
-
     await db.transaction(async (tx) => {
       for (const device of body.Devices) {
         const { ebus_id, main, bluetoothData } = device;
 
-        //check if empty
-        if (!ebus_id || !main || !bluetoothData) {
-          console.warn(`Skipping device due to missing ebus_id or data. EBUS ID: ${JSON.stringify(device.ebus_id)}`);
+        //check if main and bluetoothdata are empty
+        if (!main || !bluetoothData) {
+          console.warn(`Missing ebus_id or data. EBUS ID: ${JSON.stringify(device.ebus_id)}`);
           continue;
         }
 
-        // Check if body of json is empty
         const { longitude, latitude, speed, passenger, status } = main;      
-
         const {BL_entrance, BL_exit, BL_status} = bluetoothData;
-
-        if (
-          latitude === undefined ||
-          longitude === undefined ||
-          speed === undefined ||
-          passenger === undefined
-        ) {
-          console.warn(`Skipping device ${ebus_id} due to missing required sensor data`);
-          continue;
-        }
-
-        if (
-          BL_entrance === undefined ||
-          BL_exit === undefined ||
-          BL_status === undefined
-        ) {
-          console.warn(`Skipping device ${ebus_id} due to missing required bluetooth data`);
-          continue;
-        }
-
 
         // Ensure correct data types
         const formattedData = {
@@ -78,9 +44,6 @@ export async function POST(request: Request) {
           speed: parseFloat(speed),
           passenger_count: parseInt(passenger, 10),
           status: status || "unknown",
-          latestDeviceID: latestDeviceID.trim(),
-          latestSensorID: latestSensorID.trim(),
-          latestBLID: latestBLID.trim(),
           BL_entrance: parseInt(BL_entrance, 10),
           BL_exit: parseInt(BL_exit, 10), 
           BL_status: BL_status || "unknown",
@@ -97,29 +60,35 @@ export async function POST(request: Request) {
         // Ensure the device exists;if not insert new record
         const existingDevice = await tx.select().from(devices).where(eq(devices.ebus_id, formattedData.ebus_id)).limit(1).execute();
         if (existingDevice.length === 0) {
+          //generate in loop
+          const latestSensorID = await generateSensorID()
+          const latestDeviceID = await generateDeviceID()
+          const latestBLID = await generateBLID()
+          const ts = new Date();    
+
           await tx.insert(devices).values({
-            id: formattedData.latestDeviceID,
+            id: latestDeviceID,
             ebus_id: formattedData.ebus_id,
             registered_at: ts,
           });
 
           await tx.insert(sensorData).values({
-            id: formattedData.latestSensorID,
+            id: latestSensorID,
             latitude: formattedData.latitude,
             longitude: formattedData.longitude,
             passenger_count: actual_count,
             speed: formattedData.speed,
             status: formattedData.status,
-            device_id: formattedData.latestDeviceID,
+            device_id: latestDeviceID,
             timestamp: ts,
           });
           
           await tx.insert(BLData).values({
-            id: formattedData.latestBLID,
+            id: latestBLID,
             BL_entrance: formattedData.BL_entrance,
             BL_exit: formattedData.BL_exit,
             BL_status: formattedData.BL_status,
-            device_id: formattedData.latestDeviceID,
+            device_id: latestDeviceID,
             timestamp: ts,
           });
           revalidatePath('/dashboard')
@@ -127,6 +96,8 @@ export async function POST(request: Request) {
         }
 
         // Update the sensordata
+        const ts = new Date();
+
         await tx.update(sensorData).set({
           latitude: formattedData.latitude,
           longitude: formattedData.longitude,
